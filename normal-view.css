@@ -1,0 +1,119 @@
+/* CSS for Stencils.NormalView. Also inherited by RevealView */
+
+#content {
+    /* Stencil is shown like a paper page centered in screen and never allowed to be too small */
+	margin-top: 2rem;
+    margin-bottom: 2rem;
+    min-height: 100rem;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 50rem;
+    min-width: 30rem;
+
+    /* Border slightly darker than body background */
+    border: 1px solid #CCC;
+
+    /* White backgound with padding */
+    background-color: white;
+    padding: 3em;
+
+    /* Text */
+    font-family: serif;
+    font-size: large;
+    line-height: 1.5em;
+    text-align: justify;
+    color: #444444;
+}
+
+/* Stencil title */
+#content h1.title {
+    font-size: 1.4em;
+    margin-bottom: 1em;
+}
+
+/* Stencil authors */
+#content address.authors a[rel=author] {
+    font-size: 1.3em;
+}
+
+/* Anchors */
+#content a {
+    /* Remove underline and change colour */
+    text-decoration: none;
+    color: rgb(92, 116, 216);
+}
+
+/* Paragraph */
+#content p {
+	margin-top: 1em;
+}
+
+/* Lists */
+#content ul,ol {
+    /* Bullets and number to be inside bounding box */
+    list-style-position: inside;
+    padding: 0.5em;
+}
+#content ol {
+    list-style-type: decimal;
+}
+#content ul {
+    list-style-type: disc;
+}
+
+/* Headings */
+#content h1,
+#content h2,
+#content h3,
+#content h4,
+#content h5,
+#content h6 {
+	font-family: sans-serif;
+	font-weight: bold;
+    margin-top: 1em;
+}
+#content h1 {
+    font-size: 1.4em;
+}
+#content h2 {
+    font-size: 1.3em;
+}
+#content h3 {
+    font-size: 1.2em;
+}
+#content h4 {
+    font-size: 1.1em;
+}
+
+/**
+ * Directives which are shown as flowing inline content get 
+ * a negative margin equal to border + padding. 
+ * 
+ * This ensures that when they are revealed they can have visible border and background 
+ * colours without the layout changing
+ */
+#content [data-comment],
+#content [data-text],
+#content [data-image] {
+    margin: -1px -3px -1px -3px;
+    border: 1px solid transparent;
+    padding: 0px 2px 0px 2px;
+}
+
+/**
+ * Directives which should be hidden.
+ *
+ * Instead of using `display: none` make them zero height and width so that they have a top
+ * that can be anchored to when in reveal mode. 
+ */
+#content [data-macro],
+#content [data-code],
+#content [data-error],
+#content [data-off="true"],
+/** Anything within an off element should be hidden **/
+#content [data-off="true"] * {
+    display: block;
+    overflow: hidden;
+    height: 0em;
+    width: 0em;    
+}

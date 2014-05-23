@@ -1,0 +1,16 @@
+@import url(/core/themes/base/theme.css);
+
+@import url(normal-view.css);
+@import url(reveal-view.css);
+@import url(html-view.css);
+
+body {
+	background-color: #EEE;
+}
+
+/**
+ * Hide the MathJax message box (http://docs.mathjax.org/en/latest/api/message.html)
+ */
+#MathJax_Message {
+    display: none;
+}
