@@ -114,8 +114,17 @@ var Stencila = (function(Stencila){
 			"wrap_line_length": 80, //Maximum characters per line
 			"preserve_newlines": false, //Preserve existing line-breaks
 			"max_preserve_newlines": 0,
-			// Must not format code that may be in pre or code tags
-			"unformatted": ['pre','code'] //List of tags (defaults to inline) that should not be reformatted
+			// List of tags (defaults to inline) that should not be reformatted
+			"unformatted": [
+				// Must not format inline elements because then spaces between e.g. <span>s and following text can be lost
+				// This list from https://developer.mozilla.org/en-US/docs/Web/HTML/Inline_elemente
+				'b', 'big', 'i', 'small', 'tt',
+				'abbr', 'acronym', 'cite', 'code', 'dfn', 'em', 'kbd', 'strong', 'samp', 'var',
+				'a', 'bdo', 'br', 'img', 'map', 'object', 'q', 'script', 'span', 'sub', 'sup',
+				'button', 'input', 'label', 'select', 'textarea',
+				// Must not format programming code that may be in these tags
+				'pre','code','script'
+			] 
 		});
 	};
 
