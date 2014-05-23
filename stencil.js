@@ -94,6 +94,31 @@ var Stencila = (function(Stencila){
 		return this.view.from();
 	};
 
+	/**
+	 * Prettify stencil HTML
+	 *
+	 * Since a stencil's HML can be modified in many ways other than manual
+	 * editing (e.g. by rendering, by conetenteditable) we often prettify it.
+	 * This method simply defines standard prettifying options so that it should
+	 * always appear the same.
+	 */
+	Stencil.prototype.prettifyHtml = function(html){
+		// See https://github.com/einars/js-beautify#css--html
+		// for more details on these options
+		return html_beautify(html,{
+			"indent-inner-html":false,//Indent <head> and <body> sections [Should never exist in `html`]
+			"indent_size": 4,
+			"indent_char": " ",
+			"brace_style": "collapse",
+			"indent_scripts": "normal",
+			"wrap_line_length": 80, //Maximum characters per line
+			"preserve_newlines": false, //Preserve existing line-breaks
+			"max_preserve_newlines": 0,
+			// Must not format code that may be in pre or code tags
+			"unformatted": ['pre','code'] //List of tags (defaults to inline) that should not be reformatted
+		});
+	};
+
 	// Istantiate the singleton instance
 	Stencils.Stencil = new Stencil();
 

@@ -1,0 +1,17 @@
+/**
+ * CSS for the Stencil.HtmlView
+ */
+
+.html {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    margin-left: auto;
+    margin-right: auto;
+    min-width: 600px;
+    max-width: 1200px;
+    border: 1px solid #AAA;
+}
+
+.html #html-editor {
+    width: 100%;
+}
