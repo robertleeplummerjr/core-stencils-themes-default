@@ -7,6 +7,7 @@ var Stencila = (function(Stencila){
 	 * Manages communication with server and alternative views
 	 */
 	var Stencil = function(){
+		this.writeable = true;
 		this.view = null;
 	};
 
@@ -18,7 +19,7 @@ var Stencila = (function(Stencila){
 		var connection = Stencila.Component.Connection;
 
 		// Start with NormalView
-		self.view = new Stencils.NormalView();
+		self.view = new Stencils.NormalView(self.writeable);
 		self.view.init();
 
 		// Change views using F6 etc
@@ -71,7 +72,7 @@ var Stencila = (function(Stencila){
 		if(!(this.view instanceof viewClass)){
 			var html = this.view.from();
 			this.view.close();
-			this.view = new viewClass();
+			this.view = new viewClass(this.writeable);
 			this.view.to(html);
 		}
 	};

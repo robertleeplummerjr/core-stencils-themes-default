@@ -4,7 +4,7 @@ var Stencila = (function(Stencila){
 	/**
 	 * The default ("normal") view for a Stencil
 	 */
-	var NormalView = Stencils.NormalView = function(){
+	var NormalView = Stencils.NormalView = function(write){
 		this.content = $('main#content');
 	};
 

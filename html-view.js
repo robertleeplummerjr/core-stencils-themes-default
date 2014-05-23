@@ -7,7 +7,7 @@ var Stencila = (function(Stencila){
 	 * It's mainly going to be used by developers whoneed to drop down to HTML to fix
 	 * something up or debug stencil modifications by other views.
 	 */
-	var HtmlView = Stencils.HtmlView = function(){
+	var HtmlView = Stencils.HtmlView = function(write){
 		// Create a containter for the editor
 		this.container = $('<div class="html"><div id="html-editor" /></div>').appendTo($('body'));
 		// Create an Ace Editor instance in the container
@@ -32,6 +32,8 @@ var Stencila = (function(Stencila){
 				return this.originalOnCommandKey(event, hashId, keyCode);
 			}
 		};
+		// Set read/write mode
+		if(!write) editor.setReadOnly(true);
 
 		// It is tricky getting ACE editor to display correctly as an overlay
 		// on top of the content
