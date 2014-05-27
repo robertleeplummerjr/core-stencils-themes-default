@@ -160,9 +160,23 @@ var Stencila = (function(Stencila){
 			}
 		},
 
-		'[data-if]' : toolIffy('if'),
-		'[data-elif]' : toolIffy('elif'),
-		'[data-else]' : toolIffy('else'),
+		'[data-if]' : toolConditional('if'),
+		'[data-elif]' : toolConditional('elif'),
+		'[data-else]' : toolConditional('else'),
+
+		'[data-switch]' : {
+			open : function(tool,element){
+				tool.addClass('reveal-tool-switch');
+				tool.append(
+					'switch <span class="reveal-tool-arg reveal-tool-arg-expr switch_" contenteditable="true">' + element.attr('data-switch') + '</span>'
+				);
+			},
+			close : function(tool,element){
+				element.attr('data-switch',tool.find('.switch_').text());
+			}
+		},
+		'[data-case]' : toolConditional('case'),
+		'[data-default]' : toolConditional('default'),
 
 		'[data-for]' : {
 			open : function(tool,element){
@@ -228,16 +242,16 @@ var Stencila = (function(Stencila){
 	};
 
 	/**
-	 * Function to generate tool options for "iffy" type directives i.e. if, elif, else
-	 * @param  {String} type if, elif or else
+	 * Function to generate tool options for "conditional" directives i.e. if, elif, else
+	 * @param  {String} type The type of directive: 'if', 'elif', 'else', 'case' or 'default'
 	 */
-	function toolIffy(type){
+	function toolConditional(type){
 		return {
 			open : function(tool,element){
 				// Add class and expression box
 				tool.addClass('reveal-tool-'+type);
 				tool.append(type);
-				if(type!='else'){
+				if(type!='else' && type!='default'){
 					tool.append(
 						' <span class="reveal-tool-arg reveal-tool-arg-expr condition_" contenteditable="true">' + element.attr('data-'+type) + '</span>'
 					);
@@ -261,7 +275,7 @@ var Stencila = (function(Stencila){
 				});
 			},
 			close : function(tool,element){
-				if(type!='else') element.attr('data-'+type,tool.find('.condition_').text());
+				if(type!='else' && type!='default') element.attr('data-'+type,tool.find('.condition_').text());
 			}
 		};
 	}
