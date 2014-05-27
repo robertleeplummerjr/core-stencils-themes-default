@@ -85,35 +85,40 @@
     font-size: 1.1em;
 }
 
-/**
- * Directives which are shown as flowing inline content get 
- * a negative margin equal to border + padding. 
- * 
- * This ensures that when they are revealed they can have visible border and background 
- * colours without the layout changing
+/*Stencil directives which should be hidden.
  */
-#content [data-comment],
-#content [data-text],
-#content [data-image] {
-    margin: -1px -3px -1px -3px;
-    border: 1px solid transparent;
-    padding: 0px 2px 0px 2px;
-}
-
 /**
- * Directives which should be hidden.
- *
- * Instead of using `display: none` make them zero height and width so that they have a top
- * that can be anchored to when in reveal mode. 
+ * Any code
+ */
+#content [data-code],
+/**
+ * A `for` directive's `each` child
+ */
+#content [data-each],
+/**
+ * An `include` directive`s child elements
+ */
+#content [data-set],
+#content [data-delete],
+#content [data-replace],
+#content [data-change],
+#content [data-before],
+#content [data-set],
+#content [data-after],
+#content [data-prepend],
+#content [data-append],
+/**
+ * An `error`
+ */
+#content [data-error],
+/**
+ * A `macro` 
  */
 #content [data-macro],
-#content [data-code],
-#content [data-error],
-#content [data-off="true"],
-/** Anything within an off element should be hidden **/
-#content [data-off="true"] * {
-    display: block;
-    overflow: hidden;
-    height: 0em;
-    width: 0em;    
+/**
+ * Any element that has been turned off
+ * by rendering
+ */
+#content [data-off="true"] {
+    display: none;    
 }
