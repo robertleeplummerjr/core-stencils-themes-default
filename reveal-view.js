@@ -49,6 +49,13 @@ var Stencila = (function(Stencila){
 		this.content.find('[style]').each(function(){
 			$(this).removeAttr('style');
 		});
+		// Remove all `reveal-show` classes and ensure that
+		// class attribute is not empty
+		this.content.find('.reveal-show').each(function(){
+			var element = $(this);
+			element.removeClass('reveal-show');
+			if(element.attr('class')=='') element.removeAttr('class');
+		});
 		// Remove all decorator elements that have been added to the content
 		this.content.find('[class*="reveal-"]').remove();
 		// Do NormalView `from()` for MathJax un-typesetting etc
@@ -152,6 +159,11 @@ var Stencila = (function(Stencila){
 				element.attr('data-text',tool.find('.with_').text());
 			}
 		},
+
+		'[data-if]' : toolIffy('if'),
+		'[data-elif]' : toolIffy('elif'),
+		'[data-else]' : toolIffy('else'),
+
 		'[data-for]' : {
 			open : function(tool,element){
 				tool.addClass('reveal-tool-for');
@@ -214,6 +226,45 @@ var Stencila = (function(Stencila){
 			}
 		}
 	};
+
+	/**
+	 * Function to generate tool options for "iffy" type directives i.e. if, elif, else
+	 * @param  {String} type if, elif or else
+	 */
+	function toolIffy(type){
+		return {
+			open : function(tool,element){
+				// Add class and expression box
+				tool.addClass('reveal-tool-'+type);
+				tool.append(type);
+				if(type!='else'){
+					tool.append(
+						' <span class="reveal-tool-arg reveal-tool-arg-expr condition_" contenteditable="true">' + element.attr('data-'+type) + '</span>'
+					);
+				}
+				if(element.attr('data-off')=='true'){
+					tool.append(' <span class="reveal-tool-off">off</span>')
+				} else {
+					tool.append(' <span class="reveal-tool-on">on</span>')
+				}
+				tool.append(' <span class="reveal-tool-show">...</span>');
+				// Any of these directives may be off if the condition is false, so allow for them to be shown
+				var button = tool.find('.reveal-tool-show');
+				button.click('click',function(){
+					if(! button.hasClass('reveal-tool-button-on')){
+						element.addClass('reveal-show');
+						button.addClass('reveal-tool-button-on');
+					} else {
+						element.removeClass('reveal-show');
+						button.removeClass('reveal-tool-button-on');
+					}
+				});
+			},
+			close : function(tool,element){
+				if(type!='else') element.attr('data-'+type,tool.find('.condition_').text());
+			}
+		};
+	}
 
 	/**
 	 * Bind tools to stencil directives
