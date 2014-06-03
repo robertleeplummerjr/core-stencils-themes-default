@@ -202,6 +202,7 @@ var Stencila = (function(Stencila){
 				element.attr('data-for',tool.find('.for_').text());
 			}
 		},
+
 		'[data-include]' : {
 			open : function(tool,element){
 				tool.addClass('reveal-tool-include');
@@ -238,7 +239,57 @@ var Stencila = (function(Stencila){
 					}
 				})
 			}
-		}
+		},
+		
+		'[data-macro]' : {
+			open : function(tool,element){
+				tool.addClass('reveal-tool-macro');
+				tool.append(
+					'macro <span class="reveal-tool-arg macro_" contenteditable="true">' + (element.attr('data-macro')||'') + '</span>'
+				);
+				// `desc` child is description
+				var desc = element.find('[data-desc]');
+				if(desc){
+					tool.append(
+						'<div class="reveal-tool-arg reveal-tool-macro-desc desc_" contenteditable="true">' + desc.html() + '</div>'
+					);
+				}
+				// `param` children are parameters with syntax name[:expression] (ie. expression is optional)
+				var params = element.find('[data-param]');
+				if(params.length>0){
+					var ul = $('<ul class="reveal-tool-macro-params" />').appendTo(tool);
+					params.each(function(){
+						var param = $(this);
+						ul.append('<li class="reveal-tool-arg reveal-tool-macro-param param_" contenteditable="true">' + param.attr('data-param') + '</li>');
+					});
+				}
+			},
+			close : function(tool,element){
+				var name = tool.find('.macro_').text()
+				element.attr('data-macro',name);
+				element.attr('id',name);
+				// Set `desc` child
+				var desc = tool.find('.desc_').html();
+				if(desc.length){
+					element.find('[data-desc]').remove();
+					element.prepend('<div data-desc="">'+desc+'</div>');
+				}
+				// Remove existing `params`s and replace with those in tool
+				// Add `param`s at the top of the element in order
+				element.find('[data-param]').remove();
+				var after;
+				tool.find('.param_').each(function(){
+					var param = $(this);
+					var div = $('<div data-param="' + param.text() + '"></div>');
+					if(after) div.insertAfter(after);
+					else {
+						div.prependTo(element);
+						after = div;
+					}
+				})
+			}
+		},
+
 	};
 
 	/**
