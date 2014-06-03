@@ -12,6 +12,8 @@ var Stencila = (function(Stencila){
 		content.attr('contenteditable','true');
 		// Setup tools
 		toolsSetup(content);
+		// Setup editing
+		editingSetup(content);
 		// Setup insertion commands
 		insertsSetup(content);
 	};
@@ -420,11 +422,41 @@ var Stencila = (function(Stencila){
 	}
 
 	/**
+	 * Content editing related functions
+	 *
+	 * Dealing with `contenteditable` is somewhat of a quagmire.
+	 * These functions do some normalisation across browsers.
+	 */
+	var selected = {
+		/**
+		 * Get the node that is currently selected
+		 */
+		node : function(){
+			if(document.selection) return document.selection.createRange().parentElement();
+			else {
+				var selection = window.getSelection();
+				if(selection.rangeCount>0) return selection.getRangeAt(0).startContainer.parentNode;
+			}
+		}
+	}
+
+	function editingSetup(content){
+		// Mark any node which gets edited by the user so that it is locked for furture renderings
+		// 
+		// The `input` event is fired on the contentediable element, so need
+		// to use `selected.node` to get the actual element (binding `input` to a child event of `#content`
+		// will not work)
+		content.on('input',function(event){
+	    	var element = $(selected.node());
+			element.attr('data-lock','true');
+		});
+	};
+
+	/**
 	 * Directive insertion commands. 
 	 * 
 	 * Key bindings for inserting directives into a stencil.
 	 */
-	
 	var inserts = {
 		'ctrl+shift+c' : function(id) { return '<pre id="'+id+'" data-code="">\n</pre>'; },
 		'ctrl+shift+t' : function(id) { return '<span id="'+id+'" data-text=""></span>'; },
