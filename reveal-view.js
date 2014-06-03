@@ -12,6 +12,8 @@ var Stencila = (function(Stencila){
 		content.attr('contenteditable','true');
 		// Setup tools
 		toolsSetup(content);
+		// Setup insertion commands
+		insertsSetup(content);
 	};
 
 	/**
@@ -207,7 +209,7 @@ var Stencila = (function(Stencila){
 			open : function(tool,element){
 				tool.addClass('reveal-tool-include');
 				tool.append(
-					'for <span class="reveal-tool-arg include_" contenteditable="true">' + element.attr('data-include') + '</span>' + 
+					'include <span class="reveal-tool-arg include_" contenteditable="true">' + element.attr('data-include') + '</span>' + 
 					' version <span class="reveal-tool-arg version_" contenteditable="true">' + (element.attr('data-version')||'') + '</span>' + 
 					' select <span class="reveal-tool-arg select_" contenteditable="true">' + (element.attr('data-select')||'') + '</span>'
 				);
@@ -237,10 +239,10 @@ var Stencila = (function(Stencila){
 						div.prependTo(element);
 						after = div;
 					}
-				})
+				});
 			}
 		},
-		
+
 		'[data-macro]' : {
 			open : function(tool,element){
 				tool.addClass('reveal-tool-macro');
@@ -265,7 +267,7 @@ var Stencila = (function(Stencila){
 				}
 			},
 			close : function(tool,element){
-				var name = tool.find('.macro_').text()
+				var name = tool.find('.macro_').text();
 				element.attr('data-macro',name);
 				element.attr('id',name);
 				// Set `desc` child
@@ -286,7 +288,7 @@ var Stencila = (function(Stencila){
 						div.prependTo(element);
 						after = div;
 					}
-				})
+				});
 			}
 		},
 
@@ -308,9 +310,9 @@ var Stencila = (function(Stencila){
 					);
 				}
 				if(element.attr('data-off')=='true'){
-					tool.append(' <span class="reveal-tool-off">off</span>')
+					tool.append(' <span class="reveal-tool-off">off</span>');
 				} else {
-					tool.append(' <span class="reveal-tool-on">on</span>')
+					tool.append(' <span class="reveal-tool-on">on</span>');
 				}
 				tool.append(' <span class="reveal-tool-show">...</span>');
 				// Any of these directives may be off if the condition is false, so allow for them to be shown
@@ -416,6 +418,53 @@ var Stencila = (function(Stencila){
 			});
 		});
 	}
+
+	/**
+	 * Directive insertion commands. 
+	 * 
+	 * Key bindings for inserting directives into a stencil.
+	 */
+	
+	var inserts = {
+		'ctrl+shift+c' : function(id) { return '<pre id="'+id+'" data-code="">\n</pre>'; },
+		'ctrl+shift+t' : function(id) { return '<span id="'+id+'" data-text=""></span>'; },
+
+		'ctrl+shift+w' : function(id) { return '<div id="'+id+'" data-with=""></div>'; },
+
+		'ctrl+shift+8' : function(id) { return '<div id="'+id+'" data-if=""></div>'; },
+		'ctrl+shift+9' : function(id) { return '<div id="'+id+'" data-elif=""></div>'; },
+		'ctrl+shift+0' : function(id) { return '<div id="'+id+'" data-else=""></div>'; },
+
+		'ctrl+shift+s' : function(id) { return '<div id="'+id+'" data-switch=""></div>'; },
+		'ctrl+shift+c' : function(id) { return '<div id="'+id+'" data-case=""></div>'; },
+		'ctrl+shift+d' : function(id) { return '<div id="'+id+'" data-default=""></div>'; },
+
+		'ctrl+shift+f' : function(id) {
+			return '<div id="'+id+'" data-for=""><div data-each="">...</div></div>';
+		},
+
+		'ctrl+shift+i' : function(id) { return '<div id="'+id+'" data-include=""></div>'; },
+
+		'ctrl+shift+m' : function(id) { return '<div id="'+id+'" data-macro=""></div>'; },
+		'ctrl+shift+p' : function(id) { return '<div id="'+id+'" data-param=""></div>'; },
+	};
+
+	function insertsSetup(content){
+		$.each(inserts,function(keys,html){
+			content.bind('keydown',keys,function(event){
+				event.preventDefault();
+				// Create a new id so that the element inserted with
+				// excCommand can be retrieved
+				var id = Stencila.uniqueId();
+				// Insert html for directive with the id
+				document.execCommand('insertHTML',false,html(id));
+				// Get the newly inserted element and remove its id
+				var directive = content.find('#'+id).removeAttr('id');
+				// Trigger a moseover to bring up tool for the directive
+				directive.trigger('mouseover');
+			});
+		});
+	};
 
 	return Stencila;
 })(Stencila||{});
