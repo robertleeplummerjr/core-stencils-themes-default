@@ -116,6 +116,14 @@
  */
 #content [data-macro],
 /**
+ * A `param` directive
+ */
+#content [data-param],
+/**
+ * A `desc` directive
+ */
+#content [data-desc],
+/**
  * Any element that has been turned off
  * by rendering
  */
