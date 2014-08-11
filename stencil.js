@@ -24,9 +24,8 @@ var Stencila = (function(Stencila){
 		self.html = $('main#content').html();
 
 		// Start with NormalView.
-		// Note that the view is NOT `refresh()`ed as is usual
-		// since it does not need to be.
 		self.view = new Stencils.NormalView(self);
+		self.view.refresh();
 
 		// Change views using F6, F7 etc
 		$.each({

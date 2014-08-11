@@ -85,6 +85,19 @@
     font-size: 1.1em;
 }
 
+/**
+ * Math
+ *
+ * Will be rendered by MathJax but provide a style here so that
+ * math is visible prior to rendering or if rendering fails.
+ */
+script[type="math/tex"],
+script[type="math/asciimath"] {
+    display: inline;
+    font-style: italic;
+    color: grey;
+}
+
 /*Stencil directives which should be hidden.
  */
 /**
