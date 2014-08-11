@@ -1,7 +1,8 @@
-@import url(/core/themes/base/theme.css);
+@import url(/core/components/themes/default/theme.css);
 
 @import url(normal-view.css);
 @import url(reveal-view.css);
+@import url(cila-view.css);
 @import url(html-view.css);
 
 body {

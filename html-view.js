@@ -1,13 +1,29 @@
+// Base view
+include('/core/stencils/themes/default/content-view.js');
+
+// ACE editor : HTML and Cila editing
+include('/core/themes/base/externals/ace/ace.js',function(){
+	// Emmet extension : HTML editing shortcuts
+	include('/core/themes/base/externals/ace/ext-emmet.js',function(){
+		ace.require("ace/ext/emmet");
+	});
+});
+// Emmet tookit : HTML editing shortcuts
+include('/core/themes/base/externals/emmet.js');
+
 var Stencila = (function(Stencila){
 	var Stencils = Stencila.Stencils = Stencila.Stencils||{};
 
 	/**
-	 * The HtmlView is a HTML editor
+	 * The HtmlView provides a HTML editor
 	 *
-	 * It's mainly going to be used by developers whoneed to drop down to HTML to fix
+	 * It's mainly going to be used by developers who need to drop down to HTML to fix
 	 * something up or debug stencil modifications by other views.
 	 */
-	var HtmlView = Stencils.HtmlView = function(write){
+	var HtmlView = Stencils.HtmlView = function(stencil){
+		var self = this;
+		Stencils.ContentView.call(self,stencil);
+
 		// Create a containter for the editor
 		this.container = $('<div class="html"><div id="html-editor" /></div>').appendTo($('body'));
 		// Create an Ace Editor instance in the container
@@ -19,62 +35,60 @@ var Stencila = (function(Stencila){
 		// Set the maximum number of lines for the code. When the number
 		// of lines exceeds this number a vertical scroll bar appears on the right
 		editor.setOption("maxLines",1000);
-		// Ace intercepts special "command" keys including the ones
-		// that we use to change views so get around that here...
-		editor.keyBinding.originalOnCommandKey = editor.keyBinding.onCommandKey;
-		editor.keyBinding.onCommandKey = function(event, hashId, keyCode) {
-			if(keyCode==117 || keyCode==118 || keyCode==119 || keyCode==120){
-				var view = Stencils.Stencil;
-				if(keyCode==117) view.change(Stencils.NormalView);
-				else if(keyCode==118) view.change(Stencils.RevealView);
-			}
-			else {
-				return this.originalOnCommandKey(event, hashId, keyCode);
-			}
-		};
 		// Set read/write mode
-		if(!write) editor.setReadOnly(true);
+		if(!stencil.writeable) editor.setReadOnly(true);
 
 		// It is tricky getting ACE editor to display correctly as an overlay
 		// on top of the content
 		// So, for the time being just hide the content
 		$('main#content').hide();
+
+		self.bind();
 	};
+
+	init(function(){
+		Stencila.extend(
+			HtmlView,
+			Stencils.ContentView
+		);
+	});
 
 	/**
 	 * Close the view
 	 */
 	HtmlView.prototype.close = function(){
+		var self = this;
 		// Remove editor container and clean up
-		this.container.remove();
-		this.editor.destroy();
-		// Show content
-		$('main#content').show();
+		self.container.remove();
+		self.editor.destroy();
+		// Unbind events
+		self.unbind();
 	};
 
 	/**
-	 * Send stencil's HTML content to the view
-	 * 
-	 * @param  {String} html Stencil HTML content
+	 * Refresh the view
 	 */
-	HtmlView.prototype.to = function(html){
-		// Prettify HTML
-		var pretty = Stencils.Stencil.prettifyHtml(html);
-		// Set the editor value
-		this.editor.setValue(pretty);
-		// Focus on first line
-		this.editor.focus();
-		this.editor.gotoLine(0);
-		return this;
+	HtmlView.prototype.refresh = function(){
+		var self = this;
+		self.stencil.get('html',function(html){
+			// Beautify HTML
+			// Currently don't do this as it mucks up whitespace formatting in <pre> tags
+			// containing code
+			// self.stencil.htmlBeautify();
+			// Set the editor value
+			self.editor.setValue(html);
+			// Focus on first line
+			self.editor.focus();
+			self.editor.gotoLine(0);
+		});
 	};
 
 	/**
-	 * Get stencil's HTML content from the view
-	 * 
-	 * @param  {String} html Stencil HTML content
+	 * Restore the stencil from the view
 	 */
-	HtmlView.prototype.from = function(){
-		return this.editor.getValue();
+	HtmlView.prototype.restore = function(){
+		var self = this;
+		self.stencil.set('html',this.editor.getValue());
 	};
 
 	return Stencila;

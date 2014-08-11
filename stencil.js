@@ -1,98 +1,105 @@
+// Base class
+include('/core/components/themes/default/component.js');
+
+// View classes
+include('/core/stencils/themes/default/normal-view.js');
+include('/core/stencils/themes/default/reveal-view.js');
+include('/core/stencils/themes/default/cila-view.js');
+include('/core/stencils/themes/default/html-view.js');
+
+// Utilities
+include('/core/themes/base/externals/js-beautify.js');
+
 var Stencila = (function(Stencila){
 	var Stencils = Stencila.Stencils = Stencila.Stencils||{};
 
 	/**
-	 * Singleton class which represents the current stencil
-	 *
-	 * Manages communication with server and alternative views
+	 * A Stencil
 	 */
-	var Stencil = function(){
-		this.writeable = true;
-		this.view = null;
-	};
-
-	/**
-	 * Initialise the stencil
-	 */
-	Stencil.prototype.init = function(){
+	var Stencil  = Stencils.Stencil =  function(){		
 		var self = this;
-		var connection = Stencila.Component.Connection;
+		Stencila.Components.Component.call(self);
+		
+		// Get the initial Stencil HTML content from the page
+		self.html = $('main#content').html();
 
-		// Start with NormalView
-		self.view = new Stencils.NormalView(self.writeable);
-		self.view.init();
+		// Start with NormalView.
+		// Note that the view is NOT `refresh()`ed as is usual
+		// since it does not need to be.
+		self.view = new Stencils.NormalView(self);
 
-		// Change views using F6 etc
+		// Change views using F6, F7 etc
 		$.each({
-			'f6':  Stencils.NormalView,
-			'f7':  Stencils.RevealView,
-			//'f8': Stencils.CilaView,
-			'f9': Stencils.HtmlView
+			'f6': Stencils.NormalView,
+			'f7': Stencils.RevealView,
+			'f8': Stencils.CilaView,
+			'f9': Stencils.HtmlView,
+			'f10': Stencila.Components.BrowseView,
+			'f11': Stencila.Components.RepoView,
 		},function(key,viewClass){
 			$(document).bind('keydown',key,function(event){
 				event.preventDefault();
-				self.change(viewClass);
-			});
-		});
-
-		// Save the stencil with Ctrl+S
-		$(document).bind('keydown','ctrl+s',function(event){
-			event.preventDefault();
-			connection.call('html',[self.from()],function(results){
-				console.log('saved');
-			});
-		});
-
-		// Commit the stencil with Ctrl+D
-		$(document).bind('keydown','ctrl+d',function(event){
-			event.preventDefault();
-			connection.call('commit',['Updated'],function(results){
-				console.log('commited');
-			});
-		});
-
-		// Render the stencil with Ctrl+R
-		$(document).bind('keydown','ctrl+r',function(event){
-			event.preventDefault();
-			connection.call('render',[self.from()],function(results){
-				// First result is the stencil's rendered HTML so send it 
-				// to the current view
-				var html = results[0];
-				self.to(html);
+				self.viewChange(viewClass);
 			});
 		});
 	};
 
-	/**
-	 * Change the view
-	 * 
-	 * @param  {Class} viewClass A view Class
-	 */
-	Stencil.prototype.change = function(viewClass){
-		if(!(this.view instanceof viewClass)){
-			var html = this.view.from();
-			this.view.close();
-			this.view = new viewClass(this.writeable);
-			this.view.to(html);
+	// Deferred inheritance
+	init(function(){
+		Stencila.extend(
+			Stencil,
+			Stencila.Components.Component
+		);
+	});
+
+	Stencil.prototype.html_pull = function(callback){
+		var self = this;
+		self.call("html():string",[],callback);
+	};
+
+	Stencil.prototype.html_set = function(value){
+		var self = this;
+		self.html = value;
+		self.cila = null;
+	};
+
+	Stencil.prototype.cila_pull = function(callback){
+		var self = this;
+		self.call("cila():string",[],callback);
+	};
+
+	Stencil.prototype.cila_set = function(value){
+		var self = this;
+		self.cila = value;
+		self.html = null;
+	};
+
+	Stencil.prototype.save = function(what,content){
+		var self = this;
+		if(what=="html"){
+			content = content || self.html;
+			self.call("html(string)",[content]);
+		}
+		else if(what=="cila"){
+			content = content || self.cila;
+			self.call("cila(string)",[content]);
 		}
 	};
 
-	/**
-	 * Send stencil HTML content to current view
-	 * 
-	 * @param  {String} html HTML content
-	 */
-	Stencil.prototype.to = function(html){
-		this.view.to(html);
-	};
-
-	/**
-	 * Get stencil HTML content from current view
-	 * 
-	 * @return  {String} html HTML content
-	 */
-	Stencil.prototype.from = function(){
-		return this.view.from();
+	Stencil.prototype.render = function(what,content){
+		var self = this;
+		if(what=="html"){
+			content = content || self.html;
+			self.call("html(string).render().html():string",[content],function(html){
+				self.update('html',html);
+			});
+		}
+		else if(what=="cila"){
+			content = content || self.cila;
+			self.call("cila(string).render().cila():string",[content],function(cila){
+				self.update('cila',cila);
+			});
+		}
 	};
 
 	/**
@@ -103,10 +110,10 @@ var Stencila = (function(Stencila){
 	 * This method simply defines standard prettifying options so that it should
 	 * always appear the same.
 	 */
-	Stencil.prototype.prettifyHtml = function(html){
+	Stencil.prototype.htmlBeautify = function(){
 		// See https://github.com/einars/js-beautify#css--html
 		// for more details on these options
-		return html_beautify(html,{
+		this.html = html_beautify(this.html,{
 			"indent-inner-html":false,//Indent <head> and <body> sections [Should never exist in `html`]
 			"indent_size": 4,
 			"indent_char": " ",
@@ -128,9 +135,6 @@ var Stencila = (function(Stencila){
 			] 
 		});
 	};
-
-	// Istantiate the singleton instance
-	Stencils.Stencil = new Stencil();
 
 	return Stencila;
 })(Stencila||{});

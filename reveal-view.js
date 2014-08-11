@@ -1,11 +1,16 @@
+// Base view
+include('/core/stencils/themes/default/content-view.js');
 
 var Stencila = (function(Stencila){
 	var Stencils = Stencila.Stencils = Stencila.Stencils||{};
 
 	/**
-	 * A view which reveals stecnil directives and allows for editing
+	 * A view which reveals stencil directives and allows for WYSIWYG editing
 	 */
-	var RevealView = Stencils.RevealView = function(write){
+	var RevealView = Stencils.RevealView = function(stencil){
+		var self = this;
+		Stencils.ContentView.call(self,stencil);
+
 		var content = this.content = $('main#content');
 		// Add class and contenteditable
 		content.addClass('reveal');
@@ -16,13 +21,25 @@ var Stencila = (function(Stencila){
 		editingSetup(content);
 		// Setup insertion commands
 		insertsSetup(content);
+		// Show it (because some other views hide it)
+		content.show();
+
+		self.bind();
 	};
+
+	init(function(){
+		Stencila.extend(
+			RevealView,
+			Stencils.ContentView
+		);
+	});
 
 	/**
 	 * Close the view
 	 */
 	RevealView.prototype.close = function(){
-		var content = this.content;
+		var self = this;
+		var content = self.content;
 		// Remove class and contenteditable
 		content.removeClass('reveal');
 		content.removeAttr('contenteditable');
@@ -30,40 +47,39 @@ var Stencila = (function(Stencila){
 		content.off();
 		// Remove any elements added to the document
 		$('[class*="reveal-"]').remove();
+		// Unbind events
+		self.unbind();
 	};
 
 	/**
-	 * Send stencil's HTML content to the view
-	 * 
-	 * @param  {String} html Stencil HTML content
+	 * Refresh the view
 	 */
-	RevealView.prototype.to = function(html){
-		// Do NormalView `to()` for MathJax typesetting etc
-		Stencils.NormalView.prototype.to.call(this,html)
+	RevealView.prototype.refresh = function(){
+		// Do NormalView `refresh()` for MathJax typesetting etc
+		Stencils.NormalView.prototype.refresh.call(this)
 	};
 
 	/**
-	 * Get stencil's HTML content from the view
-	 * 
-	 * @param  {String} html Stencil HTML content
+	 * Restore the stencil from the view
 	 */
-	RevealView.prototype.from = function(){
+	RevealView.prototype.restore = function(){
+		var self = this;
 		// Remove all element styles that have been added
 		// by Javascript (e.g. by elemnt.show())
-		this.content.find('[style]').each(function(){
+		self.content.find('[style]').each(function(){
 			$(this).removeAttr('style');
 		});
 		// Remove all `reveal-show` classes and ensure that
 		// class attribute is not empty
-		this.content.find('.reveal-show').each(function(){
+		self.content.find('.reveal-show').each(function(){
 			var element = $(this);
 			element.removeClass('reveal-show');
 			if(element.attr('class')=='') element.removeAttr('class');
 		});
 		// Remove all decorator elements that have been added to the content
-		this.content.find('[class*="reveal-"]').remove();
-		// Do NormalView `from()` for MathJax un-typesetting etc
-		return Stencils.NormalView.prototype.from.call(this);
+		self.content.find('[class*="reveal-"]').remove();
+		// Do NormalView `restore()` for MathJax un-typesetting etc
+		Stencils.NormalView.prototype.restore.call(self);
 	};
 
 	/**
@@ -298,6 +314,7 @@ var Stencila = (function(Stencila){
 
 	/**
 	 * Function to generate tool options for "conditional" directives i.e. if, elif, else
+	 * 
 	 * @param  {String} type The type of directive: 'if', 'elif', 'else', 'case' or 'default'
 	 */
 	function toolConditional(type){
