@@ -4,6 +4,12 @@ include('/core/stencils/themes/default/content-view.js');
 // MathJax : maths formatting
 include('/core/themes/base/externals/MathJax/MathJax.js',function(){
 	include('/core/themes/base/externals/MathJax/config/TeX-MML-AM_HTMLorMML.js');
+	MathJax.Hub.Config({
+		showProcessingMessages: false,
+		"HTML-CSS": {
+			webFont: "STIX-Web"
+		}
+	});
 });
 
 var Stencila = (function(Stencila){
