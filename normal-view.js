@@ -69,20 +69,16 @@ var Stencila = (function(Stencila){
 	 */
 	NormalView.prototype.restore = function(){
 		var self = this;
-		// Get all MatthJax "jax" elements (e.g. 
+		// Get all MathJax "jax" elements (e.g. 
 		//    <script type="math/asciimath" id="MathJax-Element-2">e=m^2</script>
-		// ) and replace them with shorthand, original, unrendered, text equations
-		// surrounded by corresponding delimiters for the type
-		$.each({
-			'math/tex' : ['\\(','\\)'],
-			'math/asciimath' : ['|','|']
-		},function(type,delimiters){
-			$.each(MathJax.Hub.getJaxByInputType(type),function(){
+		// ) and remove the id
+		$.each(['math/tex','math/asciimath'],function(type){
+			$.each(MathJax.Hub.getJaxByInputType(type,'content'),function(){
 				var element = $(this.SourceElement());
-				element.replaceWith(delimiters[0]+element.text()+delimiters[1]);
+				if(/^MathJax/.exec(element.attr('id'))) element.removeAttr('id');
 			});
 		});
-		// Remove all MathJax elements
+		// Remove all MathJax elements which have been added
 		self.content.find('.MathJax_Preview, .MathJax').remove();
 		// Now update the stencil's HTML
 		self.stencil.set('html',self.content.html());
