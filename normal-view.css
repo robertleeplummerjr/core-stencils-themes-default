@@ -48,6 +48,14 @@
 	margin-top: 1em;
 }
 
+/* Emphasis */
+#content em {
+    font-style: italic;
+}
+#content strong {
+    font-weight: bold;
+}
+
 /* Lists */
 #content ul,ol {
     /* Bullets and number to be inside bounding box */
@@ -91,11 +99,55 @@
  * Will be rendered by MathJax but provide a style here so that
  * math is visible prior to rendering or if rendering fails.
  */
-script[type="math/tex"],
-script[type="math/asciimath"] {
+#content script[type="math/tex"],
+#content script[type="math/asciimath"] {
     display: inline;
     font-style: italic;
     color: grey;
+}
+
+/************************************************
+ * Tables
+ */
+
+#content table {
+    margin-top: 2em;
+    margin-bottom: 2em;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/************************************************
+ * Figures
+ */
+
+#content figure {
+    margin-top: 2em;
+    margin-bottom: 2em;
+}
+
+/**
+ * Figure images resized to fit within content 
+ * (with some margin) and centred
+ */
+#content figure img {
+    display: block;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/************************************************
+ * Figure and table captions
+ */
+
+#content table caption,
+#content figure figcaption,
+#content figure caption {
+    text-align: left;
+    font-family: sans-serif;
+    font-weight: bold;
 }
 
 /*Stencil directives which should be hidden.
