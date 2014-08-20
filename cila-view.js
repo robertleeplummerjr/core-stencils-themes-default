@@ -15,10 +15,11 @@ var Stencila = (function(Stencila){
 		self.container = $('<div class="cila"><div id="cila-editor" /></div>').appendTo($('body'));
 		// Create an Ace Editor instance in the container
 		var editor = self.editor = ace.edit('cila-editor');
-		editor.setFontSize(14);
+		editor.setFontSize(16);
+		editor.setTheme("ace/theme/monokai");
 		editor.getSession().setMode("ace/mode/text");
 		// Indentation characters are important:
-		editor.setShowInvisibles(true);
+		//editor.setShowInvisibles(true);
 		editor.getSession().setUseSoftTabs(false);
 		// Set the maximum number of lines for the code. When the number
 		// of lines exceeds this number a vertical scroll bar appears on the right

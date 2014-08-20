@@ -28,7 +28,8 @@ var Stencila = (function(Stencila){
 		this.container = $('<div class="html"><div id="html-editor" /></div>').appendTo($('body'));
 		// Create an Ace Editor instance in the container
 		var editor = this.editor = ace.edit('html-editor');
-		editor.setFontSize(14);
+		editor.setFontSize(16);
+		editor.setTheme("ace/theme/monokai");
 		editor.getSession().setMode("ace/mode/html");
 		// Add Emmet support
 		editor.setOption("enableEmmet", true);
