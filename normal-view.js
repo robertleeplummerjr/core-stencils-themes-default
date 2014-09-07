@@ -61,6 +61,13 @@ var Stencila = (function(Stencila){
 			self.content.find('script[type="math/tex"],script[type="math/asciimath"]').each(function(){
 				$(this).css('display','none');
 			});
+			// Make the value attribute of input elements get updated when user makes a change
+			// so that the DOM value is in the HTML that is saved and rendered (without having
+			// to have a POST)
+			self.content.find('input').on('input',function(event){
+				var input = $(this);
+				input.attr('value',input.val());
+			})
 		});
 	};
 
