@@ -58,6 +58,16 @@
     font-weight: bold;
 }
 
+/* Inline code */
+#content code {
+    font-family: mono;
+    background: #eee;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    padding: 1px;
+    margin: -1px;
+}
+
 /* Lists */
 #content ul,ol {
     /* Bullets and number to be inside bounding box */
