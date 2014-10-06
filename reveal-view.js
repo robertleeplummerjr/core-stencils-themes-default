@@ -1,6 +1,19 @@
 // Base view
 include('/core/stencils/themes/default/content-view.js');
 
+// Medium.js: for content editable
+// rangy and undo are included first to ensure "domesticated mode"
+include('/core/stencils/themes/default/requires/rangy-official/rangy-core.js',function(){
+	include('/core/stencils/themes/default/requires/rangy-official/rangy-classapplier.js');
+	include('/core/stencils/themes/default/requires/rangy-official/rangy-highlighter.js');
+	include('/core/stencils/themes/default/requires/rangy-official/rangy-selectionsaverestore.js');
+	include('/core/stencils/themes/default/requires/rangy-official/rangy-serializer.js');
+	include('/core/stencils/themes/default/requires/rangy-official/rangy-textrange.js');
+	include('/core/stencils/themes/default/requires/undo/undo.js',function(){
+		include('/core/stencils/themes/default/requires/medium.js/medium.js');
+	});	
+});
+
 var Stencila = (function(Stencila){
 	var Stencils = Stencila.Stencils = Stencila.Stencils||{};
 
@@ -11,10 +24,26 @@ var Stencila = (function(Stencila){
 		var self = this;
 		Stencils.ContentView.call(self,stencil);
 
-		var content = this.content = $('main#content');
-		// Add class and contenteditable
+		var content = self.content = $('main#content');
+		// Add class
 		content.addClass('reveal');
-		content.attr('contenteditable','true');
+		// Apply Medium.js for WYSIWYG editing
+		self.wysiwig = new Medium({
+            element: content.get(0),
+            // Define the allowed tags. 
+            // This overrides defaults with null = everything allowed.
+            // Should probably be refined in the future
+            tags:{
+				'break': 'br',
+				'horizontalRule': 'hr',
+				'paragraph': 'p',
+            	'outerLevel':null,
+            	'innerLevel':null
+            },
+            // Defines which attributes should be removed. 
+            // null = don't remove any
+            attributes: null
+        });
 		// Setup tools
 		toolsSetup(content);
 		// Setup editing
@@ -40,9 +69,10 @@ var Stencila = (function(Stencila){
 	RevealView.prototype.close = function(){
 		var self = this;
 		var content = self.content;
-		// Remove class and contenteditable
+		// Remove class
 		content.removeClass('reveal');
-		content.removeAttr('contenteditable');
+		// Disable editing
+		self.wysiwig.destroy();
 		// Remove all event handlers
 		content.off();
 		// Remove any elements added to the document
