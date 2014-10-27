@@ -16,21 +16,7 @@ var Stencila = (function(Stencila){
 	 */
 	ContentView.prototype.bind = function(){
 		var self = this;
-
-		// Save the stencil with Ctrl+S
-		$('body').bind('keydown','ctrl+s',function(event){
-			event.preventDefault();
-			self.restore();
-			self.stencil.save(self.format);
-		});
-
-		// Render the stencil with Ctrl+R
-		$('body').bind('keydown','ctrl+r',function(event){
-			event.preventDefault();
-			self.restore();
-			self.stencil.render(self.format);
-		});
-
+		
 		// Ace intercepts special "command" keys including the ones
 		// that we use to change views so get around that here...
 		var editor = self.editor;

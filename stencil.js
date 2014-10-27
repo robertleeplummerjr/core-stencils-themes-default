@@ -1,5 +1,6 @@
 // Base class
 include('/core/components/themes/default/component.js');
+include('/core/components/themes/default/menu.js');
 
 // View classes
 include('/core/stencils/themes/default/normal-view.js');
@@ -27,20 +28,54 @@ var Stencila = (function(Stencila){
 		self.view = new Stencils.NormalView(self);
 		self.view.refresh();
 
-		// Change views using F6, F7 etc
-		$.each({
-			'f6': Stencils.NormalView,
-			'f7': Stencils.RevealView,
-			'f8': Stencils.CilaView,
-			'f9': Stencils.HtmlView,
-			'f10': Stencila.Components.BrowseView,
-			'f11': Stencila.Components.RepoView,
-		},function(key,viewClass){
-			$(document).bind('keydown',key,function(event){
-				event.preventDefault();
-				self.viewChange(viewClass);
-			});
+		// Add menu;
+		self.menu = new Stencila.Components.Menu(self);
+		//	... views
+		self.menu.section();
+		self.menu.item('Normal',function(){
+			self.viewChange(Stencils.NormalView);
+		},{
+			icon: 'file-text-o',
+			keys: 'F6'
 		});
+		self.menu.item('Reveal',function(){
+			self.viewChange(Stencils.RevealView);
+		},{
+			icon:'eye',
+			keys:'F7'
+		});
+		if(self.dynamic()){
+			self.menu.item('Cila',function(){
+				self.viewChange(Stencils.CilaView);
+			},{
+				icon:'circle-thin',
+				keys:'F8'
+			});
+			self.menu.item('HTML',function(){
+				self.viewChange(Stencils.HtmlView);
+			},{
+				icon:'code',
+				keys:'F9'
+			});
+			//'f10': Stencila.Components.BrowseView,
+			//'f11': Stencila.Components.RepoView,
+			//	... actions
+			self.menu.section();
+			self.menu.item('Save',function(){
+				self.view.restore();
+				self.save(self.view.format);
+			},{
+				icon:'upload',
+				keys:'Ctrl+S'
+			});
+			self.menu.item('Refresh',function(){
+				self.view.restore();
+				self.render(self.view.format);
+			},{
+				icon:'refresh',
+				keys:'Ctrl+R'
+			});
+		}
 	};
 
 	// Deferred inheritance

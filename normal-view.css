@@ -1,25 +1,19 @@
 /* CSS for Stencils.NormalView. Also inherited by RevealView */
 
 #content {
-    /* Stencil is shown like a paper page centered in screen and never allowed to be too small */
-	margin-top: 2rem;
-    margin-bottom: 2rem;
-    min-height: 100rem;
+    min-height: 100em;
     margin-left: auto;
     margin-right: auto;
-    max-width: 50rem;
-    min-width: 30rem;
-
-    /* Border slightly darker than body background */
-    border: 1px solid #CCC;
+    max-width: 50em;
+    min-width: 30em;
 
     /* White backgound with padding */
     background-color: white;
-    padding: 3em;
+    padding: 2em;
 
     /* Text */
-    font-family: serif;
-    font-size: 15px;
+    font-family: Perpetua, Baskerville, "Big Caslon", "Palatino Linotype", Palatino, "URW Palladio L", "Nimbus Roman No9 L", serif;
+    font-size: 18px;
     line-height: 1.5em;
     text-align: justify;
     color: #444444;
@@ -27,7 +21,10 @@
 
 /* Stencil title */
 #content #title {
-    font-family: sans;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 1.5em;
     margin-bottom: 1.5em;
     text-align: center;
