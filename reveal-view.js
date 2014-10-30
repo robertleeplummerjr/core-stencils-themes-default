@@ -27,27 +27,36 @@ var Stencila = (function(Stencila){
 		var content = self.content = $('main#content');
 		// Add class
 		content.addClass('reveal');
+
 		// Apply Medium.js for WYSIWYG editing
 		self.wysiwig = new Medium({
-            element: content.get(0),
-            // Define the allowed tags. 
-            // This overrides defaults with null = everything allowed.
-            // Should probably be refined in the future
-            tags:{
+			element: content.get(0),
+			// Define the allowed tags. 
+			// This overrides defaults with null = everything allowed.
+			// Should probably be refined in the future
+			tags:{
 				'break': 'br',
 				'horizontalRule': 'hr',
 				'paragraph': 'p',
-            	'outerLevel':null,
-            	'innerLevel':null
-            },
-            // Defines which attributes should be removed. 
-            // null = don't remove any
-            attributes: null
-        });
+				'outerLevel':null,
+				'innerLevel':null
+			},
+			// Defines which attributes should be removed. 
+			// null = don't remove any
+			attributes: null
+		});
+		// Mark any node which gets edited by the user so that it is locked for furture renderings
+		// 
+		// The `input` event is fired on the contentediable element, so need
+		// to use `selected.node` to get the actual element (binding `input` to a child event of `#content`
+		// will not work)
+		content.on('input',function(event){
+			var element = $(selected.node());
+			element.attr('data-lock','true');
+		});
+
 		// Setup tools
 		toolsSetup(content);
-		// Setup editing
-		editingSetup(content);
 		// Setup insertion commands
 		insertsSetup(content);
 		// Show it (because some other views hide it)
@@ -62,6 +71,25 @@ var Stencila = (function(Stencila){
 			Stencils.ContentView
 		);
 	});
+
+	/**
+	 * Content editing related functions
+	 *
+	 * Dealing with `contenteditable` is somewhat of a quagmire.
+	 * These functions do some normalisation across browsers.
+	 */
+	var selected = {
+		/**
+		 * Get the node that is currently selected
+		 */
+		node : function(){
+			if(document.selection) return document.selection.createRange().parentElement();
+			else {
+				var selection = window.getSelection();
+				if(selection.rangeCount>0) return selection.getRangeAt(0).startContainer.parentNode;
+			}
+		}
+	}
 
 	/**
 	 * Close the view
@@ -161,7 +189,6 @@ var Stencila = (function(Stencila){
 			}
 			editor.getSession().setMode('ace/mode/'+mode);
 			editor.setValue(text);
-			editor.focus();
 			editor.gotoLine(0);
 			// Add to list of code editors which can be restored
 			// from and destroyed later
@@ -475,37 +502,6 @@ var Stencila = (function(Stencila){
 			});
 		});
 	}
-
-	/**
-	 * Content editing related functions
-	 *
-	 * Dealing with `contenteditable` is somewhat of a quagmire.
-	 * These functions do some normalisation across browsers.
-	 */
-	var selected = {
-		/**
-		 * Get the node that is currently selected
-		 */
-		node : function(){
-			if(document.selection) return document.selection.createRange().parentElement();
-			else {
-				var selection = window.getSelection();
-				if(selection.rangeCount>0) return selection.getRangeAt(0).startContainer.parentNode;
-			}
-		}
-	}
-
-	function editingSetup(content){
-		// Mark any node which gets edited by the user so that it is locked for furture renderings
-		// 
-		// The `input` event is fired on the contentediable element, so need
-		// to use `selected.node` to get the actual element (binding `input` to a child event of `#content`
-		// will not work)
-		content.on('input',function(event){
-	    	var element = $(selected.node());
-			element.attr('data-lock','true');
-		});
-	};
 
 	/**
 	 * Directive insertion commands. 
