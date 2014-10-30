@@ -60,22 +60,6 @@
     border-color: hsla(11,100%,40%,0.25);
 }
 
-#content.reveal [data-code] {
-    /**
-     * Show as a single line
-     */
-    display: block;
-    height: 0.1em;
-    /**
-     * Hide text
-     */
-    overflow: hidden;
-    color: transparent;
-
-    background-color: hsla(40,100%,50%,0.25);
-    border-color: hsla(40,100%,40%,0.25);
-}
-
 /**
  * Text directives are indicated in content
  */
@@ -253,7 +237,10 @@
 /******** Tool for `code` **********/
 
 .reveal-code-editor {
-    height: 300px;
+    min-height: 16px; /* Some height here is necessary for second-time rendering (e.g. F7 then F6 then F7) for some stange reason */
+    margin: 1em 0 1em 0;
+    border: 2px solid black;  /* Border around scroll bars too */
+    border-radius: 5px;
 }
 
 

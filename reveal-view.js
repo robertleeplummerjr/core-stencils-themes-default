@@ -85,8 +85,11 @@ var Stencila = (function(Stencila){
 	 * Refresh the view
 	 */
 	RevealView.prototype.refresh = function(){
+		var self = this;
 		// Do NormalView `refresh()` for MathJax typesetting etc
-		Stencils.NormalView.prototype.refresh.call(this)
+		Stencils.NormalView.prototype.refresh.call(self);
+		// Refresh code directives
+		self._refreshCode();
 	};
 
 	/**
@@ -94,8 +97,10 @@ var Stencila = (function(Stencila){
 	 */
 	RevealView.prototype.restore = function(){
 		var self = this;
+		// Restore code directives
+		self._restoreCode();
 		// Remove all element styles that have been added
-		// by Javascript (e.g. by elemnt.show())
+		// by Javascript (e.g. by element.show())
 		self.content.find('[style]').each(function(){
 			$(this).removeAttr('style');
 		});
@@ -113,80 +118,83 @@ var Stencila = (function(Stencila){
 	};
 
 	/**
+	 * Refresh code directives
+	 */
+	RevealView.prototype._refreshCode = function(){
+		var self = this;
+		self.codeDirectives = [];
+		self.content.find('[data-code]').each(function(){
+			var element = $(this);
+			// Get attributes of element for use below
+			var language = element.attr('data-code');
+			var text = element.text();
+			// Create an editor <pre> and insert it
+			var editorId = Stencila.uniqueId();
+			var tool = $('<pre class="reveal-code-editor" id="' + editorId + '"></pre>').insertAfter(element);
+			// Create an editor attached to the <pre>
+			var editor = ace.edit(editorId);
+			editor.setFontSize(16);
+			editor.setTheme("ace/theme/monokai");
+			// Allow for editor to auto-adjust height based on content
+			editor.setOptions({
+				minLines : 1,
+				maxLines : 100
+			});
+			// Turn of vertical line
+			editor.setShowPrintMargin(false);
+			// Add padding before first and after last lines
+			editor.renderer.setScrollMargin(5,5,0,0);
+			// Set the language mode
+			switch(language){
+				case 'r':
+					mode = 'r';
+					break;
+				case 'py':
+					mode = 'python';
+					break;
+				case 'js':
+					mode = 'javascipt';
+					break;
+				default:
+					mode = 'text';
+					break;
+			}
+			editor.getSession().setMode('ace/mode/'+mode);
+			editor.setValue(text);
+			editor.focus();
+			editor.gotoLine(0);
+			// Add to list of code editors which can be restored
+			// from and destroyed later
+			self.codeDirectives.push({
+				element : element,
+				tool : tool,
+				editor : editor
+			});
+		});
+	}
+
+	/**
+	 * Restore code directives
+	 */
+	RevealView.prototype._restoreCode = function(){
+		var self = this;
+		$.each(self.codeDirectives,function(index,directive){
+			directive.element.text(
+				directive.editor.getValue()
+			);
+			directive.editor.destroy();
+			directive.tool.remove();
+		});
+		self.codeDirectives = [];
+	}
+
+	/**
 	 * Definitions for the opening and closing of tools for
 	 * stencil directives. These are used in `toolsSetup()`.
 	 * May be object with `open` and `close` functions or a closure
 	 * that returns such an object
 	 */
 	var tools = {
-		'[data-code]' : {
-			open : function(tool,element){
-				tool.addClass('reveal-tool-code');
-				tool.append(
-					'code <span class="reveal-tool-arg language_" contenteditable="true">' + element.attr('data-code') + '</span>' + 
-					' <span class="reveal-tool-code-expand">...</span>'
-				);
-				var button = tool.find('.reveal-tool-code-expand');
-				// The tool's Ace editor which needs to be retained to get its
-				// value to put back into the element
-				var editorContainer;
-				var editor;
-				button.click('click',function(){
-					if(! button.hasClass('reveal-tool-button-on')){
-						// Get attributes of element for use below
-						var language = element.attr('data-code');
-						var text = element.text();
-						// Create an editor <pre> and insert it
-						var editorId = Stencila.uniqueId();
-						editorContainer = $('<pre class="reveal-code-editor" id="' + editorId + '"></pre>').insertAfter(element);
-						// Create an editor attached to the <pre>
-						editor = ace.edit(editorId);
-						editor.setFontSize(14);
-						// Set the language mode
-						switch(language){
-							case 'r':
-								mode = 'r';
-								break;
-							case 'py':
-								mode = 'python';
-								break;
-							case 'js':
-								mode = 'javascipt';
-								break;
-							default:
-								mode = 'text';
-								break;
-						}
-						editor.getSession().setMode('ace/mode/'+mode);
-						editor.setValue(text);
-						editor.focus();
-						editor.gotoLine(0);
-
-						var height = editorContainer.css('height');
-						editorContainer
-							.css('height','0px')
-							.animate({
-								'height':height
-							});
-
-						button.addClass('reveal-tool-button-on');
-					} else {
-						element.text(editor.getValue());
-						editor.destroy();
-						editorContainer.animate({
-							'height':'0px'
-						},function(){
-							editorContainer.remove();
-						});
-
-						button.removeClass('reveal-tool-button-on');
-					}
-				});
-			},
-			close : function(tool,element){
-				element.attr('data-code',tool.find('.language_').text());
-			}
-		},
 		'[data-text]' : {
 			open : function(tool,element){
 				tool.addClass('reveal-tool-text');
@@ -544,6 +552,8 @@ var Stencila = (function(Stencila){
 			});
 		});
 	};
+
+
 
 	return Stencila;
 })(Stencila||{});
