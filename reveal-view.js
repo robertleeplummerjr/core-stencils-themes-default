@@ -28,32 +28,34 @@ var Stencila = (function(Stencila){
 		// Add class
 		content.addClass('reveal');
 
-		// Apply Medium.js for WYSIWYG editing
-		self.wysiwig = new Medium({
-			element: content.get(0),
-			// Define the allowed tags. 
-			// This overrides defaults with null = everything allowed.
-			// Should probably be refined in the future
-			tags:{
-				'break': 'br',
-				'horizontalRule': 'hr',
-				'paragraph': 'p',
-				'outerLevel':null,
-				'innerLevel':null
-			},
-			// Defines which attributes should be removed. 
-			// null = don't remove any
-			attributes: null
-		});
-		// Mark any node which gets edited by the user so that it is locked for furture renderings
-		// 
-		// The `input` event is fired on the contentediable element, so need
-		// to use `selected.node` to get the actual element (binding `input` to a child event of `#content`
-		// will not work)
-		content.on('input',function(event){
-			var element = $(selected.node());
-			element.attr('data-lock','true');
-		});
+		if(self.stencil.writeable()){
+			// Apply Medium.js for WYSIWYG editing
+			self.wysiwig = new Medium({
+				element: content.get(0),
+				// Define the allowed tags. 
+				// This overrides defaults with null = everything allowed.
+				// Should probably be refined in the future
+				tags:{
+					'break': 'br',
+					'horizontalRule': 'hr',
+					'paragraph': 'p',
+					'outerLevel':null,
+					'innerLevel':null
+				},
+				// Defines which attributes should be removed. 
+				// null = don't remove any
+				attributes: null
+			});
+			// Mark any node which gets edited by the user so that it is locked for furture renderings
+			// 
+			// The `input` event is fired on the contentediable element, so need
+			// to use `selected.node` to get the actual element (binding `input` to a child event of `#content`
+			// will not work)
+			content.on('input',function(event){
+				var element = $(selected.node());
+				element.attr('data-lock','true');
+			});
+		}
 
 		// Setup tools
 		toolsSetup(content);
@@ -100,7 +102,7 @@ var Stencila = (function(Stencila){
 		// Remove class
 		content.removeClass('reveal');
 		// Disable editing
-		self.wysiwig.destroy();
+		if(self.wysiwig) self.wysiwig.destroy();
 		// Remove all event handlers
 		content.off();
 		// Remove any elements added to the document
@@ -163,6 +165,8 @@ var Stencila = (function(Stencila){
 			var editor = ace.edit(editorId);
 			editor.setFontSize(16);
 			editor.setTheme("ace/theme/monokai");
+			// Set read/write
+			editor.setReadOnly(!self.stencil.writeable());
 			// Allow for editor to auto-adjust height based on content
 			editor.setOptions({
 				minLines : 1,
