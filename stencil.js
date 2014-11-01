@@ -32,18 +32,27 @@ var Stencila = (function(Stencila){
 		self.menu = new Stencila.Components.Menu(self);
 		//	... views
 		self.menu.section();
+
 		self.menu.item('Normal',function(){
 			self.viewChange(Stencils.NormalView);
 		},{
 			icon: 'file-text-o',
 			keys: 'F6'
 		});
+
 		self.menu.item('Reveal',function(){
 			self.viewChange(Stencils.RevealView);
 		},{
 			icon:'eye',
 			keys:'F7'
 		});
+
+		self.menu.item('Print',function(){
+			window.print();
+		},{
+			icon:'print'
+		});
+
 		if(self.dynamic()){
 			self.menu.item('Cila',function(){
 				self.viewChange(Stencils.CilaView);

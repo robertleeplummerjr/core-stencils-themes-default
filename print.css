@@ -1,0 +1,23 @@
+@media print {
+	/* Hide the menu */
+	.menu {
+		display: none;
+	}
+	#content {
+		/* Make the text smaller and more compact */
+	    font-size: 14px;
+	    line-height: 1.2em;
+	}
+	/* Avoid page breaks within or after certain elements */
+	#content h1,
+	#content h2,
+	#content h3,
+	#content h4,
+	#content h5 {
+		page-break-after: avoid;
+	}
+	#content figure,
+	#content table {
+		page-break-inside: avoid;
+	}
+};

@@ -178,6 +178,10 @@ Sans serif font stack
     font-weight: bold;
 }
 
+#content table caption {
+    margin-bottom: 1em;
+}
+
 /*Stencil directives which should be hidden.
  */
 /**
