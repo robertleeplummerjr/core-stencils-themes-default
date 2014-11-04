@@ -4,6 +4,9 @@
 @import url(reveal-view.css);
 @import url(cila-view.css);
 @import url(html-view.css);
+
+@import url(console-window.css);
+
 @import url(print.css);
 
 body {

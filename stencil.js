@@ -8,6 +8,9 @@ include('/core/stencils/themes/default/reveal-view.js');
 include('/core/stencils/themes/default/cila-view.js');
 include('/core/stencils/themes/default/html-view.js');
 
+// Window classes
+include('/core/stencils/themes/default/console-window.js');
+
 // Utilities
 include('/core/themes/base/externals/js-beautify.js');
 
@@ -83,6 +86,12 @@ var Stencila = (function(Stencila){
 			},{
 				icon:'refresh',
 				keys:'Ctrl+R'
+			});
+
+			self.menu.item('Console',function(){
+				new Stencils.ConsoleWindow(self);
+			},{
+				icon:'terminal'
 			});
 		}
 	};
