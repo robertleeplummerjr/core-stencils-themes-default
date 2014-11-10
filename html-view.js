@@ -1,16 +1,6 @@
 // Base view
 include('/core/stencils/themes/default/content-view.js');
 
-// ACE editor : HTML and Cila editing
-include('/core/themes/base/externals/ace/ace.js',function(){
-	// Emmet extension : HTML editing shortcuts
-	include('/core/themes/base/externals/ace/ext-emmet.js',function(){
-		ace.require("ace/ext/emmet");
-	});
-});
-// Emmet tookit : HTML editing shortcuts
-include('/core/themes/base/externals/emmet.js');
-
 var Stencila = (function(Stencila){
 	var Stencils = Stencila.Stencils = Stencila.Stencils||{};
 
@@ -35,6 +25,7 @@ var Stencila = (function(Stencila){
 		editor.setOption("enableEmmet", true);
 		// Set the maximum number of lines for the code. When the number
 		// of lines exceeds this number a vertical scroll bar appears on the right
+		editor.setOption("minLines",5);
 		editor.setOption("maxLines",1000);
 		// Set read/write mode
 		if(!stencil.writeable) editor.setReadOnly(true);
@@ -60,8 +51,8 @@ var Stencila = (function(Stencila){
 	HtmlView.prototype.close = function(){
 		var self = this;
 		// Remove editor container and clean up
-		self.container.remove();
 		self.editor.destroy();
+		self.container.remove();
 		// Unbind events
 		self.unbind();
 	};

@@ -7,11 +7,12 @@
     margin-bottom: 1rem;
     margin-left: auto;
     margin-right: auto;
-    min-width: 600px;
-    max-width: 1200px;
+    min-width: 30em;
+    max-width: 50em;
     border: 1px solid #AAA;
 }
 
 .html #html-editor {
+	min-height: 16px; /* Some height here is necessary for second-time rendering */
     width: 100%;
 }

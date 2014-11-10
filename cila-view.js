@@ -17,7 +17,7 @@ var Stencila = (function(Stencila){
 		var editor = self.editor = ace.edit('cila-editor');
 		editor.setFontSize(16);
 		editor.setTheme("ace/theme/monokai");
-		editor.getSession().setMode("ace/mode/text");
+		editor.getSession().setMode("ace/mode/cila");
 		// Indentation characters are important:
 		//editor.setShowInvisibles(true);
 		editor.getSession().setUseSoftTabs(false);
