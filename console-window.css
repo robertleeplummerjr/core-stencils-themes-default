@@ -1,10 +1,10 @@
 .console-window {
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-
-    width: 630px;
+    top: 0;
+    right: 0;
+    
+    width: 20%;
+    height:100%;
 
     border: 1px solid gray;
     border-radius: 5px;
@@ -12,7 +12,7 @@
     padding: 5px;
 
     background: white;
-    opacity: 0.99;
+    opacity: 0.95;
     z-index: 1000;
 }
 
@@ -22,12 +22,19 @@
 
 .console-window .command,
 .console-window .result {
-    width: 600px;
+    width: 95%;
     padding: 1em;
-	background: #333;
+	background: black;
     font-size: 14px;
 	font-family: mono;
-	color: black;
+	color: #DDD;
+}
+
+.console-window .command {
+    height: 20%;
+}
+.console-window .result {
+    height: 80%;
 }
 
 .console-window .result.error {
