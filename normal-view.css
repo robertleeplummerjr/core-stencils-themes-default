@@ -147,6 +147,11 @@ Sans serif font stack
     margin-right: auto;
 }
 
+#content th,
+#content td {
+    padding: 1em;
+}
+
 /************************************************
  * Figures
  */
