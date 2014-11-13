@@ -6,6 +6,7 @@ include('/core/themes/base/externals/MathJax/MathJax.js',function(){
 	include('/core/themes/base/externals/MathJax/config/TeX-MML-AM_HTMLorMML.js');
 	MathJax.Hub.Config({
 		showProcessingMessages: false,
+		showMathMenu: false,
 		"HTML-CSS": {
 			webFont: "STIX-Web"
 		}
