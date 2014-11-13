@@ -89,7 +89,7 @@ var Stencila = (function(Stencila){
 			});
 
 			self.menu.item('Console',function(){
-				new Stencils.ConsoleWindow(self);
+				self.console = new Stencils.ConsoleWindow(self);
 			},{
 				icon:'terminal'
 			});

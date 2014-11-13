@@ -7,6 +7,8 @@ var Stencila = (function(Stencila){
 	var ConsoleWindow = Stencils.ConsoleWindow = function(stencil){
 		var self = this;
 		self.stencil = stencil;
+		self.history = [];
+		self.history_at = null;
 
 		var content = self.content = $(
 			'<div class="console-window">' +
@@ -20,10 +22,10 @@ var Stencila = (function(Stencila){
 		var result = content.find(".result");
 		// Key PRESSes
 		command.keypress(function(event){
-			// Ctrl+Enter
-			if(event.ctrlKey & event.keyCode==10){
-				var value = command.val();
-				self.stencil.call('context.interact(string):string',[value],function(returned){
+			// Enter
+			if(event.keyCode==13){
+				var source = command.val();
+				self.stencil.call('context.interact(string):string',[source],function(returned){
 					var code = returned.substring(0,1);
 					var output = returned.substring(1);
 					if(code=='E') result.addClass('error');
@@ -32,19 +34,37 @@ var Stencila = (function(Stencila){
 						command.val("");
 					}
 					result.val(output);
+					// Store in history
+					// Pop first element if very long history
+					if(self.history.length>1000) self.cach.shift();
+					self.history.push([source,output]);
+					self.history_at = null;
 				});
 			}
 		});
 		// Key DOWNs
 		command.keydown(function(event){
+			function history_apply(){
+				var hist = self.history[self.history.length-1-self.history_at];
+				command.val(hist[0]);
+				result.val(hist[1]);
+			}
 			// Up arrow
 			if(event.keyCode==38){
-				command.val("up");
-				// Get both the command and corresponding result from the cache
+				// Get both the source and corresponding result from the history
+				if(self.history_at>=0){
+					self.history_at += 1;
+					if(self.history_at>self.history.length-1) self.history_at = self.history.length-1;
+				}
+				else self.history_at = 0;
+				history_apply();
 			}
 			// Down arrow
 			else if(event.keyCode==40){
-				command.val("down");
+				if(self.history_at>0){
+					self.history_at -= 1;
+					history_apply();
+				}
 			}
 		});
 
