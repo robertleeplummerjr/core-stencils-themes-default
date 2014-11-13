@@ -68,6 +68,19 @@
     border-color: hsla(93,100%,80%,1);
 }
 
+/**
+ * Rendered math elements
+ */
+#content.reveal .MathJax {
+    background-color: hsla(150,100%,95%,1);
+    
+    border: 1px solid;
+    border-color: hsla(150,100%,80%,1);
+    border-radius: 3px;
+
+    padding: 0 0.2em 0 0.2em;
+    margin: 0 -0.2em 0 -0.2em;
+}
 
 #content.reveal [data-if],
 #content.reveal [data-elif],
