@@ -54,12 +54,22 @@ var Stencila = (function(Stencila){
 		var self = this;
 		self.stencil.get('html',function(html){
 			self.content.html(html);
+			// Remove wrapping CDATA elements that may be in <script type="math/..."> elements
+			// prior to rendering them with MathJax. ^= is necessary due to mode=display being added to some type 
+			// attributes
+			self.content.find('script[type^="math/tex"],script[type^="math/asciimath"]').each(function(){
+				var elem = $(this);
+				var text = elem.text().trim();
+				if(text.substr(0,9)=='<![CDATA[') text = text.substr(9);
+				if(text.substr(text.length-3)==']]>') text = text.substr(0,text.length-3);
+				elem.text(text);
+			});
 			// Do MathJax rendering of math using 'Rerender' instead of 'Typeset'
 			// because math is already in <script type="math/..."> elements
 			MathJax.Hub.Queue(["Rerender",MathJax.Hub,"content"]);
 			// Hide math script elements which should now be getting rendered into 
 			// separate display elements by MathJax
-			self.content.find('script[type="math/tex"],script[type="math/asciimath"]').each(function(){
+			self.content.find('script[type^="math/tex"],script[type^="math/asciimath"]').each(function(){
 				$(this).css('display','none');
 			});
 			// Make the value attribute of input elements get updated when user makes a change
