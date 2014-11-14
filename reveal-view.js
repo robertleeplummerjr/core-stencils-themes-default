@@ -237,6 +237,26 @@ var Stencila = (function(Stencila){
 				element.attr('data-text',tool.find('.text_').text());
 			}
 		},
+		'.MathJax' : {
+			open : function(tool,element){
+				var frame_id = element.attr('id');
+				var script_id = frame_id.replace('-Frame','');
+				var source = $('#'+script_id).text();
+				tool.addClass('reveal-tool-math');
+				tool.append(
+					'math <span class="reveal-tool-arg reveal-tool-arg-expr source_" contenteditable="true">' + source + '</span>'
+				);
+			},
+			close : function(tool,element){
+				var frame_id = element.attr('id');
+				var script_id = frame_id.replace('-Frame','');
+				var script = $('#'+script_id);
+				// Set the script text
+				script.text(tool.find('.source_').text());
+				// Update the script element so it gets rerenderd
+				MathJax.Hub.Queue(["Update",MathJax.Hub,script[0]]);
+			}
+		},
 		'[data-with]' : {
 			open : function(tool,element){
 				tool.addClass('reveal-tool-with');
