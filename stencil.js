@@ -20,7 +20,7 @@ var Stencila = (function(Stencila){
 	/**
 	 * A Stencil
 	 */
-	var Stencil  = Stencils.Stencil =  function(){		
+	var Stencil  = Stencils.Stencil =  function(){
 		var self = this;
 		Stencila.Components.Component.call(self);
 		
@@ -31,6 +31,12 @@ var Stencila = (function(Stencila){
 		self.view = new Stencils.NormalView(self);
 		self.view.refresh();
 
+		if(self.dynamic()){
+			// Console window always created (so a comand history
+			// is recorded) but not always shown
+			self.console = new Stencils.ConsoleWindow(self);
+		}
+		
 		// Add menu;
 		self.menu = new Stencila.Components.Menu(self);
 		//	... views
@@ -89,7 +95,7 @@ var Stencila = (function(Stencila){
 			});
 
 			self.menu.item('Console',function(){
-				self.console = new Stencils.ConsoleWindow(self);
+				self.console.show();
 			},{
 				icon:'terminal'
 			});

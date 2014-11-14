@@ -11,7 +11,7 @@ var Stencila = (function(Stencila){
 		self.history_at = null;
 
 		var content = self.content = $(
-			'<div class="console-window">' +
+			'<div class="console-window" style="display:none">' +
 				'<div class="close"><i class="fa fa-close"></i></div>' +
 				'<textarea class="command" type="textbox" rows="3"></textarea>' +
 				'<textarea class="result" type="textbox" readonly="readonly" rows="10"></textarea>' +
@@ -24,15 +24,13 @@ var Stencila = (function(Stencila){
 		command.keypress(function(event){
 			// Enter
 			if(event.keyCode==13){
+				event.preventDefault();
 				var source = command.val();
 				self.stencil.call('context.interact(string):string',[source],function(returned){
 					var code = returned.substring(0,1);
 					var output = returned.substring(1);
 					if(code=='E') result.addClass('error');
-					else {
-						result.removeClass('error');
-						command.val("");
-					}
+					else result.removeClass('error');
 					result.val(output);
 					// Store in history
 					// Pop first element if very long history
@@ -69,8 +67,13 @@ var Stencila = (function(Stencila){
 		});
 
 		content.find('.close').click(function(){
-			content.remove();
+			content.hide();
 		});
+	};
+
+	ConsoleWindow.prototype.show = function(callback){
+		var self = this;
+		self.content.show();
 	};
 
 	return Stencila;
