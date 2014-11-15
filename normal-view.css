@@ -187,6 +187,11 @@ Sans serif font stack
     margin-bottom: 1em;
 }
 
+#content figure caption,
+#content figure figcaption {
+    margin-top: 1em;
+}
+
 /*Stencil directives which should be hidden.
  */
 /**
