@@ -75,15 +75,24 @@ var Stencila = (function(Stencila){
 			// Handle inputs differently based on dynamic or not
 			var inputs = self.content.find('input');
 			if(self.stencil.dynamic()){
+				// Add labels for each input
+				inputs.each(function(){
+					var input = $(this);
+					var name = input.attr('name');
+					var id = Stencila.uniqueId();
+					var label = $('<label for="'+id+'">'+name+'</label>');
+					input.before(label);
+					input.attr('id',id);
+				})
 				// Make the value attribute of input elements get updated when user makes a change
 				// so that the DOM value is in the HTML that is saved and rendered (without having
 				// to have a POST)
 				function update(event){
 					var input = $(this);
-					var type = input.attr("type");
+					var type = input.attr('type');
 					var value = input.val();
 					// For files, extract the filename from the path (which can include "c:/fakepath/")
-					if(type=="file") value = value.split(/(\\|\/)/g).pop();
+					if(type=='file') value = value.split(/(\\|\/)/g).pop();
 					input.attr('value',value);
 				};
 				inputs.on('input',update);
@@ -101,7 +110,7 @@ var Stencila = (function(Stencila){
 				})
 			} else {
 				inputs.each(function(elem){
-					$(elem).attr("readonly");
+					$(elem).attr('readonly');
 				});
 				self.content.find('button').remove();
 			}
