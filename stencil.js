@@ -87,8 +87,7 @@ var Stencila = (function(Stencila){
 				keys:'Ctrl+S'
 			});
 			self.menu.item('Refresh',function(){
-				self.view.restore();
-				self.render(self.view.format);
+				self.refresh();
 			},{
 				icon:'refresh',
 				keys:'Ctrl+R'
@@ -143,6 +142,12 @@ var Stencila = (function(Stencila){
 			self.call("cila(string)",[content]);
 		}
 	};
+
+	Stencil.prototype.refresh = function(){
+		var self = this;
+		self.view.restore();
+		self.render(self.view.format);
+	}
 
 	Stencil.prototype.render = function(what,content){
 		var self = this;
