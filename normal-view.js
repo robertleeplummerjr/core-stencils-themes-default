@@ -72,13 +72,39 @@ var Stencila = (function(Stencila){
 			self.content.find('script[type^="math/tex"],script[type^="math/asciimath"]').each(function(){
 				$(this).css('display','none');
 			});
-			// Make the value attribute of input elements get updated when user makes a change
-			// so that the DOM value is in the HTML that is saved and rendered (without having
-			// to have a POST)
-			self.content.find('input').on('input',function(event){
-				var input = $(this);
-				input.attr('value',input.val());
-			})
+			// Handle inputs differently based on dynamic or not
+			var inputs = self.content.find('input');
+			if(self.stencil.dynamic()){
+				// Make the value attribute of input elements get updated when user makes a change
+				// so that the DOM value is in the HTML that is saved and rendered (without having
+				// to have a POST)
+				function update(event){
+					var input = $(this);
+					var type = input.attr("type");
+					var value = input.val();
+					// For files, extract the filename from the path (which can include "c:/fakepath/")
+					if(type=="file") value = value.split(/(\\|\/)/g).pop();
+					input.attr('value',value);
+				};
+				inputs.on('input',update);
+				inputs.on('change',update);
+				// Add a button if any inputs
+				if(inputs.length>0){
+					if(self.content.find('button').length==0){
+						inputs.last().after('<button class="refresh">Refresh</button>');
+					}
+				}
+				// Click on any buttons, refreshes the stencil rather than submitting
+				self.content.find('button').click(function(event){
+					event.preventDefault();
+					self.stencil.refresh();
+				})
+			} else {
+				inputs.each(function(elem){
+					$(elem).attr("readonly");
+				});
+				self.content.find('button').remove();
+			}
 		});
 	};
 

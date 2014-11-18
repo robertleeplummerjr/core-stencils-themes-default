@@ -192,6 +192,24 @@ Sans serif font stack
     margin-top: 1em;
 }
 
+/************************************************
+ * Inputs and buttons
+ */
+
+#content button {
+    display: block;
+    margin: 1em;
+    
+    border: none;
+    border-radius: 2rem;
+    background-color: hsla(90,60%,60%,1);
+
+    color: white;
+    font-family: 'Varela Round', 'Helvetica', sans-serif;
+    font-size: 1.1rem;
+    padding:0.4em;
+}
+
 /*Stencil directives which should be hidden.
  */
 /**
