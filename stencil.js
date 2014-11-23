@@ -165,6 +165,13 @@ var Stencila = (function(Stencila){
 		}
 	};
 
+	Stencil.prototype.inputs = function(values){
+		var self = this;
+		self.call("inputs({string,string}).render().html():string",[values],function(html){
+			self.update('html',html);
+		});
+	}
+
 	/**
 	 * Prettify stencil HTML
 	 *

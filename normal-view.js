@@ -80,9 +80,8 @@ var Stencila = (function(Stencila){
 					var input = $(this);
 					var name = input.attr('name');
 					var id = Stencila.uniqueId();
-					var label = $('<label for="'+id+'">'+name+'</label>');
+					var label = $('<label class="decor">'+name+'</label>');
 					input.before(label);
-					input.attr('id',id);
 				})
 				// Make the value attribute of input elements get updated when user makes a change
 				// so that the DOM value is in the HTML that is saved and rendered (without having
@@ -100,13 +99,18 @@ var Stencila = (function(Stencila){
 				// Add a button if any inputs
 				if(inputs.length>0){
 					if(self.content.find('button').length==0){
-						inputs.last().after('<button class="refresh">Refresh</button>');
+						inputs.last().after('<button class="decor refresh">Refresh</button>');
 					}
 				}
-				// Click on any buttons, refreshes the stencil rather than submitting
-				self.content.find('button').click(function(event){
+				// Click on a refresh button sends inputs to stencil
+				self.content.find('button.refresh').click(function(event){
 					event.preventDefault();
-					self.stencil.refresh();
+					var values = {};
+					inputs.each(function(){
+						var input = $(this);
+						values[input.attr('name')] = input.attr('value');
+					});
+					self.stencil.inputs(values);
 				})
 			} else {
 				inputs.each(function(elem){
@@ -133,6 +137,8 @@ var Stencila = (function(Stencila){
 		});
 		// Remove all MathJax elements which have been added
 		self.content.find('.MathJax_Preview, .MathJax').remove();
+		// Remove other temporary decoration elements
+		self.content.find('.decor').remove();
 		// Now update the stencil's HTML
 		self.stencil.set('html',self.content.html());
 	};

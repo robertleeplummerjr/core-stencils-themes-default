@@ -40,6 +40,16 @@ include('/core/themes/base/externals/ace/ace.js',function(){
 						token: ['text','keyword','text','string','text','keyword','text','string'],
 						regex: '((?:\\s*)|(?:\\!))(for)(\\s+)(.*)(\\s+)(in)(\\s+)(.*)'
 					},
+					{
+						// Declaration flags: const, edit
+						token: 'keyword',
+						regex: '\\s*(const|edit)'
+					},
+					{
+						// Information flags: hash, index
+						token: 'comment',
+						regex: '\\s*((&[a-zA-Z0-9]+)|(@\\d+))'
+					},
 					/*
 					{
 						token: 'keyword',
