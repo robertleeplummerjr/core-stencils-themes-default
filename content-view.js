@@ -37,8 +37,14 @@ include('/core/themes/base/externals/ace/ace.js',function(){
 						regex: '((^\\s*)|(\\!))(if|switch|text)(\\s+)(.*)'
 					},
 					{
+						// Loop: for <item> in <items>
 						token: ['text','keyword','text','string','text','keyword','text','string'],
-						regex: '((?:\\s*)|(?:\\!))(for)(\\s+)(.*)(\\s+)(in)(\\s+)(.*)'
+						regex: '^(\\t*)(for)(\\s+)(.*)(\\s+)(in)(\\s+)(.*)'
+					},
+					{
+						// Include: include <stencil> <select>
+						token: ['text','keyword','text','string','text','string'],
+						regex: '((?:\\s*)|(?:\\!))(include)(\\s+)(.*)(\\s+)(.*)'
 					},
 					{
 						// Declaration flags: const, edit

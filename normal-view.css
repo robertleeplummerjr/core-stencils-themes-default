@@ -13,7 +13,7 @@
 
     /* Text */
     font-family: Perpetua, Baskerville, "Big Caslon", "Palatino Linotype", Palatino, "URW Palladio L", "Nimbus Roman No9 L", serif;
-    font-size: 18px;
+    font-size: 17px;
     line-height: 1.5em;
     text-align: justify;
     color: #444444;
@@ -30,7 +30,8 @@ Sans serif font stack
 #content h5,
 #content h6,
 #content table,
-#content figure {
+#content figure,
+#content #outline {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
@@ -68,6 +69,19 @@ Sans serif font stack
 }
 #content strong {
     font-weight: bold;
+}
+
+/* Super and sub scripts 
+ See also http://stackoverflow.com/questions/501671/superscript-in-css-only
+ */
+sup,sub {
+    font-size: 0.8em;
+}
+sup {
+    vertical-align: super;
+}
+sub {
+    vertical-align: sub;
 }
 
 /* Inline code */
@@ -142,14 +156,53 @@ Sans serif font stack
 #content table {
     margin-top: 2em;
     margin-bottom: 2em;
-    width: 90%;
+    width: 95%;
     margin-left: auto;
     margin-right: auto;
 }
 
+#content thead,
+#content tbody {
+    text-align: left;
+}
+
 #content th,
 #content td {
-    padding: 1em;
+    padding: 0.1em 1em 0.1em 1em;
+}
+
+#content th {
+    font-weight: bold;
+}
+
+/************************************************
+ * Outline
+ */
+
+#content #outline ul {
+    list-style-type: none;
+}
+
+#content #outline .level-1 {
+    margin-left: 0em
+}
+#content #outline .level-2 {
+    margin-left: 1em
+}
+#content #outline .level-3 {
+    margin-left: 2em
+}
+#content #outline .level-4 {
+    margin-left: 3em
+}
+#content #outline .level-5 {
+    margin-left: 4em
+}
+#content #outline .level-6 {
+    margin-left: 5em
+}
+#content #outline .level-7 {
+    margin-left: 6em
 }
 
 /************************************************
