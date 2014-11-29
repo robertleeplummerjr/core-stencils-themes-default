@@ -113,6 +113,35 @@ var Stencila = (function(Stencila){
 	};
 
 	/**
+	 * Updating the view
+	 */
+	ContentView.prototype.updating = function(which){
+		if(which=='start'){
+			var indicator = $(
+				'<div class="updating" title="Updating" style="opacity: 0;">' +
+					'<i class="fa fa-spin fa-spinner"></i>' +
+				'</div>'
+			).appendTo('body');
+			$('#content').animate({
+				opacity: 0
+			});
+			indicator.animate({
+				opacity: 1
+			});
+		} else {
+			var indicator = $('body .updating')
+			indicator.animate({
+				opacity: 0
+			});
+			$('#content').animate({
+				opacity: 1
+			},function(){
+				indicator.remove();
+			});
+		}
+	}
+
+	/**
 	 * Bind events
 	 */
 	ContentView.prototype.bind = function(){

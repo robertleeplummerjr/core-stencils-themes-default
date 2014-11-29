@@ -63,22 +63,26 @@ var Stencila = (function(Stencila){
 		});
 
 		if(self.dynamic()){
+
 			self.menu.item('Cila',function(){
 				self.viewChange(Stencils.CilaView);
 			},{
 				icon:'circle-thin',
 				keys:'F8'
 			});
+
 			self.menu.item('HTML',function(){
 				self.viewChange(Stencils.HtmlView);
 			},{
 				icon:'code',
 				keys:'F9'
 			});
+
 			//'f10': Stencila.Components.BrowseView,
 			//'f11': Stencila.Components.RepoView,
 			//	... actions
 			self.menu.section();
+
 			self.menu.item('Save',function(){
 				self.view.restore();
 				self.save(self.view.format);
@@ -86,12 +90,14 @@ var Stencila = (function(Stencila){
 				icon:'upload',
 				keys:'Ctrl+S'
 			});
+
 			self.menu.item('Refresh',function(){
 				self.refresh();
 			},{
-				icon:'refresh',
+				icon:'flash',
 				keys:'Ctrl+R'
 			});
+
 			self.menu.item('Restart',function(){
 				self.restart();
 			},{
@@ -155,26 +161,31 @@ var Stencila = (function(Stencila){
 			content = content || self.html;
 			self.call("html(string).render().html():string",[content],function(html){
 				self.update('html',html);
+				self.view.updating('finish');
 			});
 		}
 		else if(what=="cila"){
 			content = content || self.cila;
 			self.call("cila(string).render().cila():string",[content],function(cila){
 				self.update('cila',cila);
+				self.view.updating('finish');
 			});
 		}
 	};
 
 	Stencil.prototype.refresh = function(){
 		var self = this;
+		self.view.updating('start');
 		self.view.restore();
 		self.render(self.view.format);
 	};
 
 	Stencil.prototype.restart = function(){
 		var self = this;
+		self.view.updating('start');
 		self.call("restart().html():string",[],function(html){
 			self.update('html',html);
+			self.view.updating('finish');
 		});
 	};
 
