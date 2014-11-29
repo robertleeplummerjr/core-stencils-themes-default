@@ -92,6 +92,12 @@ var Stencila = (function(Stencila){
 				icon:'refresh',
 				keys:'Ctrl+R'
 			});
+			self.menu.item('Restart',function(){
+				self.restart();
+			},{
+				icon:'refresh',
+				keys:'Ctrl+Shift+R'
+			});
 
 			self.menu.item('Console',function(){
 				self.console.show();
@@ -143,12 +149,6 @@ var Stencila = (function(Stencila){
 		}
 	};
 
-	Stencil.prototype.refresh = function(){
-		var self = this;
-		self.view.restore();
-		self.render(self.view.format);
-	}
-
 	Stencil.prototype.render = function(what,content){
 		var self = this;
 		if(what=="html"){
@@ -163,6 +163,19 @@ var Stencila = (function(Stencila){
 				self.update('cila',cila);
 			});
 		}
+	};
+
+	Stencil.prototype.refresh = function(){
+		var self = this;
+		self.view.restore();
+		self.render(self.view.format);
+	};
+
+	Stencil.prototype.restart = function(){
+		var self = this;
+		self.call("restart().html():string",[],function(html){
+			self.update('html',html);
+		});
 	};
 
 	Stencil.prototype.inputs = function(values){
