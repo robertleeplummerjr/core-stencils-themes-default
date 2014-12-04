@@ -51,6 +51,11 @@ Sans serif font stack
     font-size: 1.3em;
 }
 
+/* Hide other 'meta' attributes */
+#content #theme {
+    display: none;
+}
+
 /* Anchors */
 #content a {
     /* Remove underline and change colour */
