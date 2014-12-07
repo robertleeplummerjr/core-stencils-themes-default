@@ -146,7 +146,7 @@ sub {
 #content script[type="math/asciimath"] {
     display: inline;
     font-style: italic;
-    color: grey;
+    color: gray;
 }
 
 #content p.equation {
@@ -250,6 +250,18 @@ sub {
     margin-top: 1em;
 }
 
+#content table caption .label .number,
+#content figure figcaption .label .number,
+#content figure caption  .label .number {
+    margin-left: 0.2em;
+}
+
+#content table caption .label .separator,
+#content figure figcaption .label .separator,
+#content figure caption  .label .separator {
+    margin-right: 0.2em;
+}
+
 /************************************************
  * Inputs and buttons
  */
@@ -290,10 +302,6 @@ sub {
 #content [data-after],
 #content [data-prepend],
 #content [data-append],
-/**
- * An `error`
- */
-#content [data-error],
 /**
  * A `macro` 
  */

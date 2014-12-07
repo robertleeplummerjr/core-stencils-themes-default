@@ -40,9 +40,7 @@
 
 #content.reveal [data-macro],
 #content.reveal [data-param],
-#content.reveal [data-desc],
-
-#content.reveal [data-error] {
+#content.reveal [data-desc]{
 	transition: all 0.5s;  
 
     border: 1px solid #222;
@@ -174,16 +172,6 @@
     border-color: hsla(340,100%,80%,1);
 }
 
-#content.reveal [data-error] {
-    display: block;
-    background-color: hsla(0,90%,90%,1);
-    border-color: hsla(0,90%,80%,1);
-
-    font-family: mono;
-    font-size: 14px;
-    color: black;
-}
-
 /******** Tools **********/
 
 .reveal-tool {
@@ -196,6 +184,10 @@
     font-family: sans;
     font-size: 0.8em;
     color: #EEE;
+}
+
+.reveal-tool-error {
+    color: rgb(256,70,70);
 }
 
 .reveal-tool-pointer {

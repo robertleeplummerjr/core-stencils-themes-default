@@ -457,6 +457,8 @@ var Stencila = (function(Stencila){
 						'<div class="reveal-tool-container">' +
 							'<div class="reveal-tool">' +
 								'<i></i>' +
+								'<div class="reveal-tool-info"></div>' +
+								'<div class="reveal-tool-error"></div>' +
 							'</div>' +
 							'<div class="reveal-tool-pointer"></div>' +
 						'</div>'
@@ -468,7 +470,13 @@ var Stencila = (function(Stencila){
 					// and call if needed
 					if(options instanceof Function) options = options();
 					// Open the tool
-					options.open(tool.find('.reveal-tool'),element);
+					var info = tool.find('.reveal-tool-info')
+					options.open(info,element);
+					// Add errors
+					var error = element.attr("data-error");
+					if(error){
+						tool.find('.reveal-tool-error').text(error);
+					}
 					// Position the tool
 					var position = element.offset();
 					position.top = Math.max(10,position.top - tool.outerHeight() - 1);
@@ -480,7 +488,7 @@ var Stencila = (function(Stencila){
 					// Variable to indicate if the tool is activated
 					// by a click and so should not disappear on a mouseout
 					var activated = false;
-					// Function inside this closure used 
+					// Function inside this closure
 					// that is used a couple of times below
 					var toolDestroy = function(){
 						options.close(tool,element);

@@ -82,11 +82,11 @@ var Stencila = (function(Stencila){
 					var id = Stencila.uniqueId();
 					var label = $('<label class="decor">'+name+'</label>');
 					input.before(label);
-				})
+				});
 				// Make the value attribute of input elements get updated when user makes a change
 				// so that the DOM value is in the HTML that is saved and rendered (without having
 				// to have a POST)
-				function update(event){
+				var update = function(event){
 					var input = $(this);
 					var type = input.attr('type');
 					var value = input.val();
@@ -98,7 +98,7 @@ var Stencila = (function(Stencila){
 				inputs.on('change',update);
 				// Add a button if any inputs
 				if(inputs.length>0){
-					if(self.content.find('button').length==0){
+					if(self.content.find('button').length===0){
 						inputs.last().after('<button class="decor refresh">Refresh</button>');
 					}
 				}
@@ -111,7 +111,7 @@ var Stencila = (function(Stencila){
 						values[input.attr('name')] = input.attr('value');
 					});
 					self.stencil.inputs(values);
-				})
+				});
 			} else {
 				inputs.each(function(elem){
 					$(elem).attr('readonly');
