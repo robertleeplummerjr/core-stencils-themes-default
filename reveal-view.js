@@ -30,7 +30,7 @@ var Stencila = (function(Stencila){
 
 		if(self.stencil.writeable()){
 			// Apply Medium.js for WYSIWYG editing
-			self.wysiwig = new Medium({
+			self.wysiwyg = new Medium({
 				element: content.get(0),
 				// Define the allowed tags. 
 				// This overrides defaults with null = everything allowed.
@@ -58,9 +58,9 @@ var Stencila = (function(Stencila){
 		}
 
 		// Setup tools
-		toolsSetup(content);
+		self._setupTools();
 		// Setup insertion commands
-		insertsSetup(content);
+		self._setupInserts();
 		// Show it (because some other views hide it)
 		content.show();
 
@@ -102,7 +102,7 @@ var Stencila = (function(Stencila){
 		// Remove class
 		content.removeClass('reveal');
 		// Disable editing
-		if(self.wysiwig) self.wysiwig.destroy();
+		if(self.wysiwyg) self.wysiwyg.destroy();
 		// Remove all event handlers
 		content.off();
 		// Remove any elements added to the document
@@ -119,7 +119,9 @@ var Stencila = (function(Stencila){
 		// Do NormalView `refresh()` for MathJax typesetting etc
 		Stencils.NormalView.prototype.refresh.call(self);
 		// Refresh code directives
-		self._refreshCode();
+		self.renderCode();
+		// Refresh console
+		self.renderConsole();
 	};
 
 	/**
@@ -139,7 +141,7 @@ var Stencila = (function(Stencila){
 		self.content.find('.reveal-show').each(function(){
 			var element = $(this);
 			element.removeClass('reveal-show');
-			if(element.attr('class')=='') element.removeAttr('class');
+			if(element.attr('class')==='') element.removeAttr('class');
 		});
 		// Remove all decorator elements that have been added to the content
 		self.content.find('[class*="reveal-"]').remove();
@@ -148,50 +150,68 @@ var Stencila = (function(Stencila){
 	};
 
 	/**
+	 * Directive insertion commands. 
+	 * 
+	 * Key bindings for inserting directives into a stencil.
+	 */
+	RevealView.prototype._setupInserts = function(){
+		var self = this;
+		var inserts = {
+			'ctrl+shift+c' : function(id) { return '<pre id="'+id+'" data-code="">\n</pre>'; },
+			'ctrl+shift+t' : function(id) { return '<span id="'+id+'" data-text=""></span>'; },
+
+			'ctrl+shift+w' : function(id) { return '<div id="'+id+'" data-with=""></div>'; },
+
+			'ctrl+shift+8' : function(id) { return '<div id="'+id+'" data-if=""></div>'; },
+			'ctrl+shift+9' : function(id) { return '<div id="'+id+'" data-elif=""></div>'; },
+			'ctrl+shift+0' : function(id) { return '<div id="'+id+'" data-else=""></div>'; },
+
+			'ctrl+shift+s' : function(id) { return '<div id="'+id+'" data-switch=""></div>'; },
+			'ctrl+shift+a' : function(id) { return '<div id="'+id+'" data-case=""></div>'; },
+			'ctrl+shift+d' : function(id) { return '<div id="'+id+'" data-default=""></div>'; },
+
+			'ctrl+shift+f' : function(id) {
+				return '<div id="'+id+'" data-for=""><div data-each="">...</div></div>';
+			},
+
+			'ctrl+shift+i' : function(id) { return '<div id="'+id+'" data-include=""></div>'; },
+
+			'ctrl+shift+m' : function(id) { return '<div id="'+id+'" data-macro=""></div>'; },
+			'ctrl+shift+p' : function(id) { return '<div id="'+id+'" data-param=""></div>'; },
+		};
+		$.each(inserts,function(keys,html){
+			self.content.bind('keydown',keys,function(event){
+				event.preventDefault();
+				// Create a new id so that the element inserted with
+				// excCommand can be retrieved
+				var id = Stencila.uniqueId();
+				// Insert html for directive with the id
+				self.wysiwyg.insertHtml(html(id));
+				// Get the newly inserted element and remove its id
+				var directive = self.content.find('#'+id).removeAttr('id');
+				// Trigger a moseover to bring up tool for the directive
+				directive.trigger('mouseover');
+			});
+		});
+	};
+
+	/**
 	 * Refresh code directives
 	 */
-	RevealView.prototype._refreshCode = function(){
+	RevealView.prototype.renderCode = function(){
 		var self = this;
 		self.codeDirectives = [];
 		self.content.find('[data-code]').each(function(){
 			var element = $(this);
 			// Get attributes of element for use below
 			var language = element.attr('data-code');
+			var format = element.attr('data-format');
 			var text = element.text();
 			// Create an editor <pre> and insert it
 			var editorId = Stencila.uniqueId();
 			var tool = $('<pre class="reveal-code-editor" id="' + editorId + '"></pre>').insertAfter(element);
-			// Create an editor attached to the <pre>
-			var editor = ace.edit(editorId);
-			editor.setFontSize(16);
-			editor.setTheme("ace/theme/monokai");
-			// Set read/write
-			editor.setReadOnly(!self.stencil.writeable());
-			// Allow for editor to auto-adjust height based on content
-			editor.setOptions({
-				minLines : 1,
-				maxLines : 100
-			});
-			// Turn of vertical line
-			editor.setShowPrintMargin(false);
-			// Add padding before first and after last lines
-			editor.renderer.setScrollMargin(5,5,0,0);
-			// Set the language mode
-			switch(language){
-				case 'r':
-					mode = 'r';
-					break;
-				case 'py':
-					mode = 'python';
-					break;
-				case 'js':
-					mode = 'javascipt';
-					break;
-				default:
-					mode = 'text';
-					break;
-			}
-			editor.getSession().setMode('ace/mode/'+mode);
+			if(format) tool.addClass('reveal-code-editor-out');
+			var editor = editorCreate(editorId,language,self.stencil.writeable());
 			editor.setValue(text);
 			editor.gotoLine(0);
 			// Add to list of code editors which can be restored
@@ -202,7 +222,7 @@ var Stencila = (function(Stencila){
 				editor : editor
 			});
 		});
-	}
+	};
 
 	/**
 	 * Restore code directives
@@ -217,7 +237,23 @@ var Stencila = (function(Stencila){
 			directive.tool.remove();
 		});
 		self.codeDirectives = [];
-	}
+	};
+
+	/**
+	 * Refresh console element
+	 */
+	RevealView.prototype.renderConsole = function(){
+		var self = this;
+		var console = self.content.find('#console');
+		if(console.size()>0) self.console = new ConsoleTool(self.stencil,self,console);
+	};
+
+	RevealView.prototype.ensureConsole = function(){
+		var self = this;
+		var console = self.content.find('#console');
+		if(console.size()==0) self.content.append('<div id="console"></div>');
+		self.renderConsole();
+	};
 
 	/**
 	 * Definitions for the opening and closing of tools for
@@ -444,12 +480,13 @@ var Stencila = (function(Stencila){
 	/**
 	 * Bind tools to stencil directives
 	 */
-	function toolsSetup(content){
+	RevealView.prototype._setupTools = function(){
+		var self = this;
 		$.each(tools,function(selector,options){
 			// On mouseover delegation.
 			// This is bound to content (rather than document) because we use
 			// `content.off()` when closing this view to unbind all events.
-			content.on('mouseover',selector,function(){
+			self.content.on('mouseover',selector,function(){
 				var element = $(this);
 				if(!element.data('tooled')){
 					// Create the tool
@@ -470,7 +507,7 @@ var Stencila = (function(Stencila){
 					// and call if needed
 					if(options instanceof Function) options = options();
 					// Open the tool
-					var info = tool.find('.reveal-tool-info')
+					var info = tool.find('.reveal-tool-info');
 					options.open(info,element);
 					// Add errors
 					var error = element.attr("data-error");
@@ -533,55 +570,190 @@ var Stencila = (function(Stencila){
 				}
 			});
 		});
-	}
-
-	/**
-	 * Directive insertion commands. 
-	 * 
-	 * Key bindings for inserting directives into a stencil.
-	 */
-	var inserts = {
-		'ctrl+shift+c' : function(id) { return '<pre id="'+id+'" data-code="">\n</pre>'; },
-		'ctrl+shift+t' : function(id) { return '<span id="'+id+'" data-text=""></span>'; },
-
-		'ctrl+shift+w' : function(id) { return '<div id="'+id+'" data-with=""></div>'; },
-
-		'ctrl+shift+8' : function(id) { return '<div id="'+id+'" data-if=""></div>'; },
-		'ctrl+shift+9' : function(id) { return '<div id="'+id+'" data-elif=""></div>'; },
-		'ctrl+shift+0' : function(id) { return '<div id="'+id+'" data-else=""></div>'; },
-
-		'ctrl+shift+s' : function(id) { return '<div id="'+id+'" data-switch=""></div>'; },
-		'ctrl+shift+c' : function(id) { return '<div id="'+id+'" data-case=""></div>'; },
-		'ctrl+shift+d' : function(id) { return '<div id="'+id+'" data-default=""></div>'; },
-
-		'ctrl+shift+f' : function(id) {
-			return '<div id="'+id+'" data-for=""><div data-each="">...</div></div>';
-		},
-
-		'ctrl+shift+i' : function(id) { return '<div id="'+id+'" data-include=""></div>'; },
-
-		'ctrl+shift+m' : function(id) { return '<div id="'+id+'" data-macro=""></div>'; },
-		'ctrl+shift+p' : function(id) { return '<div id="'+id+'" data-param=""></div>'; },
 	};
 
-	function insertsSetup(content){
-		$.each(inserts,function(keys,html){
-			content.bind('keydown',keys,function(event){
+	var ConsoleTool = Stencils.ConsoleTool = function(stencil,view,element){
+		var self = this;
+		self.stencil = stencil;
+		self.view = view;
+		self.element = element;
+		self.language = 'r';
+
+		self.history = element.find('.history li');
+		self.position = null;
+
+		// Create tool
+		var tool = $(
+			'<div class="reveal-console" contenteditable="false">' +
+				'<div class="reveal-console-header">' +
+					'<span class="reveal-console-label"><i class="fa fa-terminal"></i>Console</span>' +
+					'<div class="reveal-console-actions">' +
+						'<a href="" class="reveal-console-insert">Code</a>' +
+						'<a href="" class="reveal-console-insert">Text</a>' +
+						'<a href="" class="reveal-console-insert">Table</a>' +
+						'<a href="" class="reveal-console-insert">Figure</a>' +
+					'</div>' +
+				'</div>' +
+				'<pre class="reveal-console-editor" id="reveal-console-editor"></pre>' +
+				'<pre class="reveal-console-result"></pre>' +
+			'</div>'
+		).insertAfter(self.element);
+
+		// Create an editor and override key bindings 
+		var editor = self.editor = editorCreate('reveal-console-editor',self.language,true);
+		editor.keyBinding.originalOnCommandKey = editor.keyBinding.onCommandKey;
+		editor.keyBinding.onCommandKey = function(event, hashId, keyCode) {
+			if(keyCode==13){
 				event.preventDefault();
-				// Create a new id so that the element inserted with
-				// excCommand can be retrieved
-				var id = Stencila.uniqueId();
-				// Insert html for directive with the id
-				document.execCommand('insertHTML',false,html(id));
-				// Get the newly inserted element and remove its id
-				var directive = content.find('#'+id).removeAttr('id');
-				// Trigger a moseover to bring up tool for the directive
-				directive.trigger('mouseover');
-			});
+				self.execute();
+			}
+			else if(event.keyCode==38){
+				event.preventDefault();
+				self.up();
+			}
+			else if(event.keyCode==40){
+				event.preventDefault();
+				self.down();
+			}
+			else {
+				return this.originalOnCommandKey(event, hashId, keyCode);
+			}
+		};
+
+		// Create a result element
+		self.result = tool.find('.reveal-console-result');
+
+		// Bind insert link
+		tool.find('.reveal-console-insert').click(function(event){
+			event.preventDefault();
+			self.insert();
 		});
 	};
 
+	ConsoleTool.prototype.execute = function(){
+		var self = this;
+		// Clear result
+		self.result.removeClass('error');
+		self.result.html("");
+		// Get and execute source code
+		var source = self.editor.getValue();
+		self.stencil.call('interact(string):string',[source],function(returned){
+			var code = returned.substring(0,1);
+			var output = returned.substring(1);
+			if(code=='E'){
+				self.result.addClass('error');
+				self.result.text(output);
+			}
+			else if(code=='I') self.result.append('<img src="'+output+'">');
+			else{
+				self.result.text(output);
+			}
+			self.result.attr('data-type',code);
+			// Add an item to the history
+			var hist = self.element.find('.history');
+			if(hist.size()===0) hist = $('<ul class="history"></ul>').appendTo(self.element);
+			hist.prepend(
+				'<li>' +
+					'<pre class="source">' + source + '</pre>' +
+					'<pre class="result">' + self.result.html() + '</pre>' +
+				'</li>'
+			);
+			// Update the history and position
+			self.history = self.element.find('.history li');
+			if(self.history.size()>100) self.history.last().remove();
+			self.position = null;
+		});
+	};
 
+	ConsoleTool.prototype.restore = function(){
+		var self = this;
+		var entry = $(self.history[self.position]);
+		self.editor.setValue(entry.find('.source').text());
+		self.result.html(entry.find('.result').html());
+	};
+
+	ConsoleTool.prototype.up = function(){
+		var self = this;
+		if(self.position>=0){
+			self.position += 1;
+			if(self.position>self.history.size()-1) self.position = self.history.size()-1;
+		}
+		else self.position = 0;
+		self.restore();
+	};
+
+	ConsoleTool.prototype.down = function(){
+		var self = this;
+		self.position -= 1;
+		if(self.position<0) self.position = 0;
+		self.restore();
+	};
+
+	ConsoleTool.prototype.insert = function(event){
+		var self = this;
+		// Hack to get Medium to insert. You need to have cursor in 
+		// content when this is clicked
+		Medium.activeElement = self.view.wysiwyg.element;
+		// Insert code and result
+		var insert;
+		var code = $('<pre data-code="'+self.language+'"></pre>');
+		code.text(self.editor.getValue());
+		var type = self.result.attr('data-type');
+		if(type==='I'){
+			insert = $('<figure></figure>');
+			code.attr("data-format","png");
+			insert.append(code);
+			var img = self.result.find('img');
+			img.attr("data-out","true");
+			insert.append(img);
+		}
+		else {
+			insert = code;
+		}
+		self.view.wysiwyg.insertHtml(insert.get(0));
+		// Refresh the view now content has been added
+		self.view.renderCode();
+	};
+
+	/**
+	 * Create a code editor for this view
+	 *
+	 * A private function to ensure consistency across applications
+	 * within this view
+	 */
+	editorCreate = function(id,language,writeable){
+		var editor = ace.edit(id);
+		editor.setFontSize(16);
+		editor.setTheme("ace/theme/monokai");
+		// Set read/write
+		editor.setReadOnly(!writeable);
+		// Allow for editor to auto-adjust height based on content
+		editor.setOptions({
+			minLines : 1,
+			maxLines : 100
+		});
+		// Turn of vertical line
+		editor.setShowPrintMargin(false);
+		// Add padding before first and after last lines
+		editor.renderer.setScrollMargin(5,5,0,0);
+		// Set the language mode
+		switch(language){
+			case 'r':
+				mode = 'r';
+				break;
+			case 'py':
+				mode = 'python';
+				break;
+			case 'js':
+				mode = 'javascipt';
+				break;
+			default:
+				mode = 'text';
+				break;
+		}
+		editor.getSession().setMode('ace/mode/'+mode);
+		return editor;
+	};
 
 	return Stencila;
 })(Stencila||{});

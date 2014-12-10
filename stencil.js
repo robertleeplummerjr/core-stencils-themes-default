@@ -8,9 +8,6 @@ include('/core/stencils/themes/default/reveal-view.js');
 include('/core/stencils/themes/default/cila-view.js');
 include('/core/stencils/themes/default/html-view.js');
 
-// Window classes
-include('/core/stencils/themes/default/console-window.js');
-
 // Utilities
 include('/core/themes/base/externals/js-beautify.js');
 
@@ -30,12 +27,6 @@ var Stencila = (function(Stencila){
 		// Start with NormalView.
 		self.view = new Stencils.NormalView(self);
 		self.view.refresh();
-
-		if(self.dynamic()){
-			// Console window always created (so a comand history
-			// is recorded) but not always shown
-			self.console = new Stencils.ConsoleWindow(self);
-		}
 		
 		// Add menu;
 		self.menu = new Stencila.Components.Menu(self);
@@ -106,7 +97,8 @@ var Stencila = (function(Stencila){
 			});
 
 			self.menu.item('Console',function(){
-				self.console.show();
+				self.viewChange(Stencils.RevealView);
+				self.view.ensureConsole();
 			},{
 				icon:'terminal'
 			});

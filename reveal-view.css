@@ -248,9 +248,18 @@
 
 .reveal-code-editor {
     min-height: 16px; /* Some height here is necessary for second-time rendering (e.g. F7 then F6 then F7) for some stange reason */
-    margin: 1em 0 1em 0;
-    border: 2px solid black;  /* Border around scroll bars too */
+    width: 100%;
+    margin-top: 1em;
+    border: 1px solid black;  /* Border around scroll bars too */
     border-radius: 5px;
+}
+
+.reveal-code-editor-out {
+    border-radius: 5px 5px 0 0; 
+}
+#content.reveal [data-out]{
+    border: 1px solid black;
+    border-radius: 0 0 5px 5px;
 }
 
 
@@ -269,4 +278,43 @@
 
 .reveal-tool-macro-desc {
     display: block;
+}
+
+/******** Console **********/
+.reveal-console {
+    border: 1px solid black;
+    border-radius: 5px;
+    margin-top: 2em;
+    margin-bottom: 2em;
+}
+.reveal-console-header {
+    background-color: black;
+    padding: 0 0.5em;
+    font-family: 'Varela Round', 'Helvetica', sans-serif;
+    font-size: 14px;
+}
+.reveal-console-header i {
+    margin-right: 0.3em;
+}
+.reveal-console-label {
+    color: #8be63f;
+}
+.reveal-console-actions {
+    float: right;
+}
+.reveal-console-editor {
+    min-height: 16px; /* Some height here is necessary for second-time rendering (e.g. F7 then F6 then F7) for some stange reason */
+}
+.reveal-console-result {
+    min-height: 3em;
+}
+.reveal-console-result {
+    font-size: 14px;
+    font-family: mono;
+}
+.reveal-console-result img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;
 }
