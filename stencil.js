@@ -9,7 +9,7 @@ include('/core/stencils/themes/default/cila-view.js');
 include('/core/stencils/themes/default/html-view.js');
 
 // Utilities
-include('/core/themes/base/externals/js-beautify.js');
+include('/core/stencils/themes/default/js-beautify.js');
 
 var Stencila = (function(Stencila){
 	var Stencils = Stencila.Stencils = Stencila.Stencils||{};
