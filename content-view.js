@@ -1,7 +1,7 @@
 // ACE editor : HTML and Cila editing
-include('/core/components/themes/default/requires/ace/ace.js',function(){
+include('/core/components/themes/base/requires/ace/ace.js',function(){
 	// Emmet extension : HTML editing shortcuts
-	include('/core/components/themes/default/requires/ace/ext-emmet.js',function(){
+	include('/core/components/themes/base/requires/ace/ext-emmet.js',function(){
 		ace.require("ace/ext/emmet");
 	});
 
@@ -97,7 +97,7 @@ include('/core/components/themes/default/requires/ace/ace.js',function(){
 
 });
 // Emmet tookit : HTML editing shortcuts
-include('/core/components/themes/default/requires/emmet.js');
+include('/core/components/themes/base/requires/emmet.js');
 
 var Stencila = (function(Stencila){
 	var Stencils = Stencila.Stencils = Stencila.Stencils||{};

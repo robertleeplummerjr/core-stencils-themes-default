@@ -2,8 +2,8 @@
 include('/core/stencils/themes/default/content-view.js');
 
 // MathJax : maths formatting
-include('/core/themes/base/externals/MathJax/MathJax.js',function(){
-	include('/core/themes/base/externals/MathJax/config/TeX-MML-AM_HTMLorMML.js');
+include('/core/stencils/themes/default/requires/MathJax/MathJax.js',function(){
+	include('/core/stencils/themes/default/requires/MathJax/config/TeX-MML-AM_HTMLorMML.js');
 	MathJax.Hub.Config({
 		showProcessingMessages: false,
 		showMathMenu: false,
