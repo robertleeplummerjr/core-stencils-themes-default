@@ -5,11 +5,14 @@ include('/core/components/themes/base/requires/ace/ace.js',function(){
 		ace.require("ace/ext/emmet");
 	});
 
-	ace.define('ace/mode/cila_highlight_rules', function(require, exports, module) {
-		var oop = ace.require("ace/lib/oop");
-		var TextHighlightRules = ace.require("ace/mode/text_highlight_rules").TextHighlightRules;
-		//var RHighlightRules = ace.require("ace/mode/r_highlight_rules").RHighlightRules;
-		//var PythonHighlightRules = ace.require("ace/mode/python_highlight_rules").PythonHighlightRules;
+	var define = ace.define;
+	var require = ace.require;
+	
+	define('ace/mode/cila_highlight_rules', function(require, exports, module) {
+		var oop = require("ace/lib/oop");
+		var TextHighlightRules = require("ace/mode/text_highlight_rules").TextHighlightRules;
+		var RHighlightRules = require("ace/mode/r_highlight_rules").RHighlightRules;
+		var PythonHighlightRules = require("ace/mode/python_highlight_rules").PythonHighlightRules;
 
 		var CilaHighlightRules = function() {
 			/*
@@ -25,27 +28,61 @@ include('/core/components/themes/base/requires/ace/ace.js',function(){
 			this.$rules = {
 				'start': [
 					{
-						token: 'constant.language',
-						regex: '^\\s*('+
-									'section|nav|article|aside|address|h1|h2|h3|h4|h5|h6|p|hr|pre|blockquote|ol|ul|li|dl|dt|dd|' +
-									'figure|figcaption|div|a|em|strong|small|s|cite|q|dfn|abbr|data|time|code|var|samp|kbd|sub|sup|i|b|u|mark|ruby|' +
-									'rt|rp|bdi|bdo|span|br|wbr|ins|del|table|caption|colgroup|col|tbody|thead|tfoot|tr|td|th' +
-								')((\\s+)|(\\!)|$)'
+						token: [
+						    'constant.language',
+						    'text'
+						],
+						regex: 
+						    '^('+
+						        'section|nav|article|aside|address|h1|h2|h3|h4|h5|h6|p|hr|pre|blockquote|ol|ul|li|dl|dt|dd|' +
+								'figure|figcaption|div|a|em|strong|small|s|cite|q|dfn|abbr|data|time|code|var|samp|kbd|sub|sup|i|b|u|mark|ruby|' +
+								'rt|rp|bdi|bdo|span|br|wbr|ins|del|table|caption|colgroup|col|tbody|thead|tfoot|tr|td|th' + 
+						    ')(?:( +)|$)'
 					},
+
+					// Directives with no argument
+					// else,default
 					{
-						token: 'keyword',
-						regex: '((^\\s*)|(\\!))(if|switch|text)(\\s+)(.*)'
+						token: [
+						    'keyword'
+						],
+						regex:
+						    '(else|default)$'
 					},
+					
+					// Directives with a single expression argument
+					// text,with,if,elif,switch,case
 					{
-						// Loop: for <item> in <items>
-						token: ['text','keyword','text','string','text','keyword','text','string'],
-						regex: '^(\\t*)(for)(\\s+)(.*)(\\s+)(in)(\\s+)(.*)'
+						token: [
+						    'keyword','text','string'
+						],
+						regex:
+						    '(text|ref|with|if|elif|switch|case)( +)(.+)$'
 					},
+					
+					// Directive for
 					{
-						// Include: include <stencil> <select>
-						token: ['text','keyword','text','string','text','string'],
-						regex: '((?:\\s*)|(?:\\!))(include)(\\s+)(.*)(\\s+)(.*)'
+						token: [
+						    'keyword','text','string','text','keyword','text','string'
+						],
+						regex:
+						    '(for)( +)(.+?)( +)(in)( +)(.+)$'
 					},
+
+					// Directive include
+					{
+						token: [
+						    'keyword','text','string',
+						    'text','keyword','text','string',
+						    'text','keyword','text','string'
+						],
+						regex: 
+						    '(include)( +)(.+?)' +
+						    '(?:( +)(version)( +)(.+?))?' + 
+						    '(?:( +)(select)( +)(.+?))?' + 
+						    '$'
+					},
+					
 					{
 						// Declaration flags: const, edit
 						token: 'keyword',
@@ -56,6 +93,8 @@ include('/core/components/themes/base/requires/ace/ace.js',function(){
 						token: 'comment',
 						regex: '\\s*((&[a-zA-Z0-9]+)|(@\\d+))'
 					},
+					
+					
 					/*
 					{
 						token: 'keyword',
