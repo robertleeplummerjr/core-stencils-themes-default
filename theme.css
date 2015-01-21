@@ -1,4 +1,4 @@
-@import url(/core/components/themes/base/theme.css);
+@import url(/core/themes/base/theme.css);
 
 @import url(normal-view.css);
 @import url(reveal-view.css);

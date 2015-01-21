@@ -1,6 +1,6 @@
 // Base class
-include('/core/components/themes/base/component.js');
-include('/core/components/themes/base/menu.js');
+include('/core/themes/base/component.js');
+include('/core/themes/base/menu.js');
 
 // View classes
 include('/core/stencils/themes/default/normal-view.js');
@@ -9,7 +9,7 @@ include('/core/stencils/themes/default/cila-view.js');
 include('/core/stencils/themes/default/html-view.js');
 
 // Utilities
-include('/core/components/themes/base/requires/js-beautify.js');
+include('/core/themes/base/requires/js-beautify.js');
 
 var Stencila = (function(Stencila){
 	var Stencils = Stencila.Stencils = Stencila.Stencils||{};

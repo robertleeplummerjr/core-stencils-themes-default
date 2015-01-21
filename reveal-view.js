@@ -119,7 +119,7 @@ var Stencila = (function(Stencila){
 		// Do NormalView `refresh()` for MathJax typesetting etc
 		Stencils.NormalView.prototype.refresh.call(self);
 		// Refresh code directives
-		self.renderCode();
+		self.renderExec();
 		// Refresh console
 		self.renderConsole();
 	};
@@ -130,7 +130,7 @@ var Stencila = (function(Stencila){
 	RevealView.prototype.restore = function(){
 		var self = this;
 		// Restore code directives
-		self._restoreCode();
+		self._restoreExec();
 		// Remove all element styles that have been added
 		// by Javascript (e.g. by element.show())
 		self.content.find('[style]').each(function(){
@@ -157,8 +157,8 @@ var Stencila = (function(Stencila){
 	RevealView.prototype._setupInserts = function(){
 		var self = this;
 		var inserts = {
-			'ctrl+shift+c' : function(id) { return '<pre id="'+id+'" data-code="">\n</pre>'; },
-			'ctrl+shift+t' : function(id) { return '<span id="'+id+'" data-text=""></span>'; },
+			'ctrl+shift+c' : function(id) { return '<pre id="'+id+'" data-exec="">\n</pre>'; },
+			'ctrl+shift+t' : function(id) { return '<span id="'+id+'" data-write=""></span>'; },
 
 			'ctrl+shift+w' : function(id) { return '<div id="'+id+'" data-with=""></div>'; },
 
@@ -196,27 +196,27 @@ var Stencila = (function(Stencila){
 	};
 
 	/**
-	 * Refresh code directives
+	 * Refresh `exec` directives
 	 */
-	RevealView.prototype.renderCode = function(){
+	RevealView.prototype.renderExec = function(){
 		var self = this;
-		self.codeDirectives = [];
-		self.content.find('[data-code]').each(function(){
+		self.execDirectives = [];
+		self.content.find('[data-exec]').each(function(){
 			var element = $(this);
 			// Get attributes of element for use below
-			var language = element.attr('data-code');
+			var language = element.attr('data-exec');
 			var format = element.attr('data-format');
 			var text = element.text();
 			// Create an editor <pre> and insert it
 			var editorId = Stencila.uniqueId();
-			var tool = $('<pre class="reveal-code-editor" id="' + editorId + '"></pre>').insertAfter(element);
-			if(format) tool.addClass('reveal-code-editor-out');
+			var tool = $('<pre class="reveal-exec-editor" id="' + editorId + '"></pre>').insertAfter(element);
+			if(format) tool.addClass('reveal-exec-editor-out');
 			var editor = editorCreate(editorId,language,self.stencil.writeable());
 			editor.setValue(text);
 			editor.gotoLine(0);
 			// Add to list of code editors which can be restored
 			// from and destroyed later
-			self.codeDirectives.push({
+			self.execDirectives.push({
 				element : element,
 				tool : tool,
 				editor : editor
@@ -227,16 +227,16 @@ var Stencila = (function(Stencila){
 	/**
 	 * Restore code directives
 	 */
-	RevealView.prototype._restoreCode = function(){
+	RevealView.prototype._restoreExec = function(){
 		var self = this;
-		$.each(self.codeDirectives,function(index,directive){
+		$.each(self.execDirectives,function(index,directive){
 			directive.element.text(
 				directive.editor.getValue()
 			);
 			directive.editor.destroy();
 			directive.tool.remove();
 		});
-		self.codeDirectives = [];
+		self.execDirectives = [];
 	};
 
 	/**
@@ -712,7 +712,7 @@ var Stencila = (function(Stencila){
 		}
 		self.view.wysiwyg.insertHtml(insert.get(0));
 		// Refresh the view now content has been added
-		self.view.renderCode();
+		self.view.renderExec();
 	};
 
 	/**

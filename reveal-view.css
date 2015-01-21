@@ -17,7 +17,7 @@
 }
 
 #content.reveal [data-comment],
-#content.reveal [data-code],
+#content.reveal [data-exec],
 
 #content.reveal [data-text],
 #content.reveal [data-image],
@@ -172,6 +172,15 @@
     border-color: hsla(340,100%,80%,1);
 }
 
+/* Override above colors with red for errors */
+#content.reveal [data-error-refer-missing],
+#content.reveal [data-error-refer-unlabelled] {
+    display: inline-block;
+    min-width: 1em;
+    min-height: 1em;
+    background-color: rgb(256,70,70);
+}
+
 /******** Tools **********/
 
 .reveal-tool {
@@ -244,9 +253,9 @@
     font-family: monospace;
 }
 
-/******** Tool for `code` **********/
+/******** Tool for `exec` **********/
 
-.reveal-code-editor {
+.reveal-exec-editor {
     min-height: 16px; /* Some height here is necessary for second-time rendering (e.g. F7 then F6 then F7) for some stange reason */
     width: 100%;
     margin-top: 1em;
@@ -254,7 +263,7 @@
     border-radius: 5px;
 }
 
-.reveal-code-editor-out {
+.reveal-exec-editor-out {
     border-radius: 5px 5px 0 0; 
 }
 #content.reveal [data-out]{

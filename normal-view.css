@@ -286,7 +286,7 @@ sub {
 /**
  * Any code
  */
-#content [data-code],
+#content [data-exec],
 /**
  * A `for` directive's `each` child
  */
