@@ -262,25 +262,30 @@ var Stencila = (function(Stencila){
 	 * that returns such an object
 	 */
 	var tools = {
-		'[data-text]' : {
+		'[data-write]' : {
 			open : function(tool,element){
-				tool.addClass('reveal-tool-text');
+				tool.addClass('reveal-tool-write');
 				tool.append(
-					'text <span class="reveal-tool-arg reveal-tool-arg-expr text_" contenteditable="true">' + element.attr('data-text') + '</span>'
+					'write <span class="reveal-tool-arg reveal-tool-arg-expr write_" contenteditable="true">' + element.attr('data-write') + '</span>'
 				);
 			},
 			close : function(tool,element){
-				element.attr('data-text',tool.find('.text_').text());
+				element.attr('data-write',tool.find('.write_').text());
 			}
 		},
 		'.MathJax' : {
 			open : function(tool,element){
 				var frame_id = element.attr('id');
 				var script_id = frame_id.replace('-Frame','');
-				var source = $('#'+script_id).text();
+				var script = $('#'+script_id);
+				var type = script.attr('type');
+				var label;
+				if(type.indexOf("asciimath")>-1) label = 'ASCIIMath';
+				else label = 'LaTeX';
+				var source = script.text();
 				tool.addClass('reveal-tool-math');
 				tool.append(
-					'math <span class="reveal-tool-arg reveal-tool-arg-expr source_" contenteditable="true">' + source + '</span>'
+					label+' <span class="reveal-tool-arg reveal-tool-arg-expr source_" contenteditable="true">' + source + '</span>'
 				);
 			},
 			close : function(tool,element){
@@ -297,11 +302,11 @@ var Stencila = (function(Stencila){
 			open : function(tool,element){
 				tool.addClass('reveal-tool-with');
 				tool.append(
-					'text <span class="reveal-tool-arg reveal-tool-arg-expr with_" contenteditable="true">' + element.attr('data-with') + '</span>'
+					'with <span class="reveal-tool-arg reveal-tool-arg-expr with_" contenteditable="true">' + element.attr('data-with') + '</span>'
 				);
 			},
 			close : function(tool,element){
-				element.attr('data-text',tool.find('.with_').text());
+				element.attr('data-with',tool.find('.with_').text());
 			}
 		},
 

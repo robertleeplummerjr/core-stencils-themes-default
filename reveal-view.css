@@ -101,7 +101,8 @@
 #content.reveal [data-elif][data-off],
 #content.reveal [data-else][data-off],
 #content.reveal [data-case][data-off],
-#content.reveal [data-default][data-off] {
+#content.reveal [data-default][data-off],
+#content.reveal [data-when][data-off] {
     /**
      * Show as a single line
      */
@@ -114,7 +115,8 @@
 #content.reveal [data-elif][data-off]:before,
 #content.reveal [data-else][data-off]:before,
 #content.reveal [data-case][data-off]:before,
-#content.reveal [data-default][data-off]:before {
+#content.reveal [data-default][data-off]:before,
+#content.reveal [data-when][data-off]:before {
     /** Add :before content to shift down and hide actual content **/
     content: "";
     display: block;
@@ -169,14 +171,6 @@
     /** Set colours **/
     background-color: hsla(340,100%,95%,1);
     border-color: hsla(340,100%,80%,1);
-}
-
-/* Override above colors with red for errors */
-#content.reveal [data-error]{
-    display: inline-block;
-    min-width: 1em;
-    min-height: 1em;
-    background-color: rgb(256,70,70);
 }
 
 /******** Tools **********/
