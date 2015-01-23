@@ -251,15 +251,15 @@ sub {
     margin-top: 1em;
 }
 
-#content table caption .label .number,
-#content figure figcaption .label .number,
-#content figure caption  .label .number {
+#content table caption [data-label] .number,
+#content figure figcaption [data-label] .number,
+#content figure caption  [data-label] .number {
     margin-left: 0.2em;
 }
 
-#content table caption .label .separator,
-#content figure figcaption .label .separator,
-#content figure caption  .label .separator {
+#content table caption [data-label] .separator,
+#content figure figcaption [data-label] .separator,
+#content figure caption  [data-label] .separator {
     margin-right: 0.2em;
 }
 
@@ -307,14 +307,6 @@ sub {
  * A `macro` 
  */
 #content [data-macro],
-/**
- * A `param` directive
- */
-#content [data-param],
-/**
- * A `desc` directive
- */
-#content [data-desc],
 /**
  * Any element that has been turned off
  * by rendering

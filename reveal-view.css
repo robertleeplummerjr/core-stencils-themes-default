@@ -16,11 +16,10 @@
     outline: none;
 }
 
-#content.reveal [data-comment],
 #content.reveal [data-exec],
+#content.reveal [data-when],
 
-#content.reveal [data-text],
-#content.reveal [data-image],
+#content.reveal [data-write],
 
 #content.reveal [data-with],
 
@@ -39,7 +38,7 @@
 #content.reveal [data-set],
 
 #content.reveal [data-macro],
-#content.reveal [data-param],
+#content.reveal [data-par],
 #content.reveal [data-desc]{
 	transition: all 0.5s;  
 
@@ -61,7 +60,7 @@
 /**
  * Text directives are indicated in content
  */
-#content.reveal [data-text] {
+#content.reveal [data-write] {
     background-color: hsla(93,100%,95%,1);
     border-color: hsla(93,100%,80%,1);
 }
@@ -173,8 +172,7 @@
 }
 
 /* Override above colors with red for errors */
-#content.reveal [data-error-refer-missing],
-#content.reveal [data-error-refer-unlabelled] {
+#content.reveal [data-error]{
     display: inline-block;
     min-width: 1em;
     min-height: 1em;
