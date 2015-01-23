@@ -262,6 +262,17 @@ var Stencila = (function(Stencila){
 	 * that returns such an object
 	 */
 	var tools = {
+		'[data-when]' : {
+			open : function(tool,element){
+				tool.addClass('reveal-tool-when');
+				tool.append(
+					'when <span class="reveal-tool-arg reveal-tool-arg-expr when_" contenteditable="true">' + element.attr('data-when') + '</span>'
+				);
+			},
+			close : function(tool,element){
+				element.attr('data-when',tool.find('.when_').text());
+			}
+		},
 		'[data-write]' : {
 			open : function(tool,element){
 				tool.addClass('reveal-tool-write');

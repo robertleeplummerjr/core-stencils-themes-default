@@ -49,6 +49,11 @@
     padding: 0.2em;
 }
 
+#content.reveal [data-when] {
+    background-color: hsla(30,90%,90%,1);
+    border-color: hsla(30,80%,80%,1);
+}
+
 /**
  * Comments are indicated in content
  */
@@ -63,6 +68,11 @@
 #content.reveal [data-write] {
     background-color: hsla(93,100%,95%,1);
     border-color: hsla(93,100%,80%,1);
+}
+
+#content.reveal [data-with] {
+    background-color: hsla(70,90%,90%,1);
+    border-color: hsla(70,80%,80%,1);
 }
 
 /**
@@ -258,7 +268,7 @@
 .reveal-exec-editor-out {
     border-radius: 5px 5px 0 0; 
 }
-#content.reveal [data-out]{
+#content.reveal [data-output]{
     border: 1px solid black;
     border-radius: 0 0 5px 5px;
 }
