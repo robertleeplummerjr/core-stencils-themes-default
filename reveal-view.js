@@ -132,9 +132,13 @@ var Stencila = (function(Stencila){
 		// Restore code directives
 		self._restoreExec();
 		// Remove all element styles that have been added
-		// by Javascript (e.g. by element.show())
+		// by Javascript (e.g. by element.show()). But not for
+		// `img [data-output]` directives which need style to define their size
 		self.content.find('[style]').each(function(){
-			$(this).removeAttr('style');
+			var elem = $(this);
+			if(!(elem.prop("tagName").toLowerCase()=="img" & elem.attr("data-output")=="true")){
+				elem.removeAttr('style');
+			}
 		});
 		// Remove all `reveal-show` classes and ensure that
 		// class attribute is not empty
