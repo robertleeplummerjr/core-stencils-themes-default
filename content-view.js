@@ -29,58 +29,58 @@ include('/core/themes/base/requires/ace/ace.js',function(){
 				'start': [
 					{
 						token: [
-						    'constant.language',
-						    'text'
+							'constant.language',
+							'text'
 						],
-						regex: 
-						    '^('+
-						        'section|nav|article|aside|address|h1|h2|h3|h4|h5|h6|p|hr|pre|blockquote|ol|ul|li|dl|dt|dd|' +
+						regex:
+							'\\b('+
+								'section|nav|article|aside|address|h1|h2|h3|h4|h5|h6|p|hr|pre|blockquote|ol|ul|li|dl|dt|dd|' +
 								'figure|figcaption|div|a|em|strong|small|s|cite|q|dfn|abbr|data|time|code|var|samp|kbd|sub|sup|i|b|u|mark|ruby|' +
-								'rt|rp|bdi|bdo|span|br|wbr|ins|del|table|caption|colgroup|col|tbody|thead|tfoot|tr|td|th' + 
-						    ')(?:( +)|$)'
+								'rt|rp|bdi|bdo|span|br|wbr|ins|del|table|caption|colgroup|col|tbody|thead|tfoot|tr|td|th' +
+							')\\b'
 					},
 
 					// Directives with no argument
 					// else,default
 					{
 						token: [
-						    'keyword'
+							'keyword'
 						],
 						regex:
-						    '(else|default)$'
+							'(else|default)$'
 					},
 					
 					// Directives with a single expression argument
 					// text,with,if,elif,switch,case
 					{
 						token: [
-						    'keyword','text','string'
+							'keyword','text','string'
 						],
 						regex:
-						    '(text|ref|with|if|elif|switch|case)( +)(.+)$'
+							'(text|ref|with|if|elif|switch|case)( +)(.+)$'
 					},
 					
 					// Directive for
 					{
 						token: [
-						    'keyword','text','string','text','keyword','text','string'
+							'keyword','text','string','text','keyword','text','string'
 						],
 						regex:
-						    '(for)( +)(.+?)( +)(in)( +)(.+)$'
+							'(for)( +)(.+?)( +)(in)( +)(.+)$'
 					},
 
 					// Directive include
 					{
 						token: [
-						    'keyword','text','string',
-						    'text','keyword','text','string',
-						    'text','keyword','text','string'
+							'keyword','text','string',
+							'text','keyword','text','string',
+							'text','keyword','text','string'
 						],
-						regex: 
-						    '(include)( +)(.+?)' +
-						    '(?:( +)(version)( +)(.+?))?' + 
-						    '(?:( +)(select)( +)(.+?))?' + 
-						    '$'
+						regex:
+							'(include)( +)(.+?)' +
+							'(?:( +)(version)( +)(.+?))?' +
+							'(?:( +)(select)( +)(.+?))?' +
+							'$'
 					},
 					
 					{
@@ -155,8 +155,9 @@ var Stencila = (function(Stencila){
 	 * Updating the view
 	 */
 	ContentView.prototype.updating = function(which){
+		var indicator;
 		if(which=='start'){
-			var indicator = $(
+			indicator = $(
 				'<div class="updating" title="Updating" style="opacity: 0;">' +
 					'<i class="fa fa-spin fa-spinner"></i>' +
 				'</div>'
@@ -168,7 +169,7 @@ var Stencila = (function(Stencila){
 				opacity: 1
 			});
 		} else {
-			var indicator = $('body .updating')
+			indicator = $('body .updating');
 			indicator.animate({
 				opacity: 0
 			});
@@ -178,7 +179,7 @@ var Stencila = (function(Stencila){
 				indicator.remove();
 			});
 		}
-	}
+	};
 
 	/**
 	 * Bind events
