@@ -75,6 +75,95 @@ var Stencila = (function(Stencila){
 	});
 
 	/**
+	 * Set up an array of directive objects to be used below
+	 *
+	 * html: html to insert
+	 * key: insert key shortcut
+	 * 		Under Chrome not all ctrl+shift+<key> combinations seem to work
+	 * 		These were arrived at after some experimentation
+	 */
+	RevealView.prototype.directives = [{
+			name: 'exec',
+			html: '<pre data-exec="r">\n</pre>',
+			icon: 'chevron-circle-left',
+			help: 'Execute code in the stencil\'s context',
+			keys: 'ctrl+shift+e'
+		},{
+			name: 'write',
+			html: '<span data-write=""></span>',
+			icon: 'chevron-circle-left',
+			help: 'Write a variable to the stencil',
+			keys: 'ctrl+shift+y'
+		},{
+			name: 'if',
+			html: '<div data-if=""></div>',
+			icon: 'chevron-circle-left',
+			help: '',
+			keys: 'ctrl+shift+8'
+		},{
+			name: 'elif',
+			html: '<div data-elif=""></div>',
+			icon: 'chevron-circle-left',
+			help: '',
+			keys: 'ctrl+shift+9'
+		},{
+			name: 'else',
+			html: '<div data-else=""></div>',
+			icon: 'chevron-circle-left',
+			help: '',
+			keys: 'ctrl+shift+0'
+		},{
+			name: 'switch',
+			html: '<div data-switch=""></div>',
+			icon: 'chevron-circle-left',
+			help: '',
+			keys: 'ctrl+shift+s'
+		},{
+			name: 'case',
+			html: '<div data-case=""></div>',
+			icon: 'chevron-circle-left',
+			help: '',
+			keys: 'ctrl+shift+a'
+		},{
+			name: 'default',
+			html: '<div data-default=""></div>',
+			icon: 'chevron-circle-left',
+			help: '',
+			keys: 'ctrl+shift+d'
+		},{
+			name: 'for',
+			html: '<div data-for=""><div data-each="">...</div></div>',
+			icon: 'chevron-circle-left',
+			help: '',
+			keys: 'ctrl+shift+f'
+		},{
+			name: 'include',
+			html: '<div data-include=""></div>',
+			icon: 'chevron-circle-left',
+			help: '',
+			keys: 'ctrl+shift+i'
+		},{
+			name: 'set',
+			html: '<div data-set=""></div>',
+			icon: 'chevron-circle-left',
+			help: '',
+			keys: 'ctrl+shift+o'
+		},{
+			name: 'macro',
+			html: '<div data-macro=""></div>',
+			icon: 'chevron-circle-left',
+			help: '',
+			keys: 'ctrl+shift+m'
+		},{
+			name: 'par',
+			html: '<div data-par=""></div>',
+			icon: 'chevron-circle-left',
+			help: '',
+			keys: 'ctrl+shift+p'
+		}
+	];
+
+	/**
 	 * Content editing related functions
 	 *
 	 * Dealing with `contenteditable` is somewhat of a quagmire.
@@ -171,43 +260,50 @@ var Stencila = (function(Stencila){
 	 */
 	RevealView.prototype._setupInserts = function(){
 		var self = this;
-		var inserts = {
-			'ctrl+shift+c' : function(id) { return '<pre id="'+id+'" data-exec="">\n</pre>'; },
-			'ctrl+shift+t' : function(id) { return '<span id="'+id+'" data-write=""></span>'; },
-
-			'ctrl+shift+w' : function(id) { return '<div id="'+id+'" data-with=""></div>'; },
-
-			'ctrl+shift+8' : function(id) { return '<div id="'+id+'" data-if=""></div>'; },
-			'ctrl+shift+9' : function(id) { return '<div id="'+id+'" data-elif=""></div>'; },
-			'ctrl+shift+0' : function(id) { return '<div id="'+id+'" data-else=""></div>'; },
-
-			'ctrl+shift+s' : function(id) { return '<div id="'+id+'" data-switch=""></div>'; },
-			'ctrl+shift+a' : function(id) { return '<div id="'+id+'" data-case=""></div>'; },
-			'ctrl+shift+d' : function(id) { return '<div id="'+id+'" data-default=""></div>'; },
-
-			'ctrl+shift+f' : function(id) {
-				return '<div id="'+id+'" data-for=""><div data-each="">...</div></div>';
-			},
-
-			'ctrl+shift+i' : function(id) { return '<div id="'+id+'" data-include=""></div>'; },
-
-			'ctrl+shift+m' : function(id) { return '<div id="'+id+'" data-macro=""></div>'; },
-			'ctrl+shift+p' : function(id) { return '<div id="'+id+'" data-param=""></div>'; },
-		};
-		$.each(inserts,function(keys,html){
-			self.content.bind('keydown',keys,function(event){
+		// Create an insert tool
+		var tool = $(
+			'<div class="reveal-insert-container">' +
+				'<div class="reveal-insert">' +
+					'<ul></ul>' +
+				'</div>' +
+			'</div>'
+		);
+		tool.css("position","absolute");
+		tool.css("z-index","100");
+		var ul = tool.find(".reveal-insert ul");
+		// Add each directive to tool and setup key bindings		
+		$.each(self.directives,function(index,directive){
+			var insert = function(event){
+				console.log('insert:'+directive.name);
 				event.preventDefault();
+				var elem = $(directive.html);
 				// Create a new id so that the element inserted with
-				// excCommand can be retrieved
+				// excCommand can be retrieved to trigger mouseove below
 				var id = Stencila.uniqueId();
-				// Insert html for directive with the id
-				self.wysiwyg.insertHtml(html(id));
+				elem.attr("id",id);
+				// Insert elem
+				self.wysiwyg.focus();
+				self.wysiwyg.insertHtml(elem[0]);
 				// Get the newly inserted element and remove its id
-				var directive = self.content.find('#'+id).removeAttr('id');
+				elem = self.content.find('#'+id).removeAttr('id');
 				// Trigger a moseover to bring up tool for the directive
-				directive.trigger('mouseover');
-			});
+				elem.trigger('mouseover');
+				if(directive.name=='exec'){
+					self.renderExec();
+				}
+			};
+			$(
+				'<li>' +
+					'<a href="" title="' + directive.help + '">'+
+						'<i class="fa fa-' + directive.icon + '"></i>' +
+						directive.name +
+						'<span class="keys">' + directive.keys + '</span>' +
+					'</a>' +
+				'</li>'
+			).appendTo(ul).find('a').click(insert);
+			self.content.bind('keydown',directive.keys,insert);
 		});
+		tool.appendTo(document.body);
 	};
 
 	/**
