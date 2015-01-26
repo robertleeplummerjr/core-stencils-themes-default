@@ -79,14 +79,6 @@ var Stencila = (function(Stencila){
 			// Handle inputs differently based on dynamic or not
 			var inputs = self.content.find('input');
 			if(self.stencil.dynamic()){
-				// Add labels for each input
-				inputs.each(function(){
-					var input = $(this);
-					var name = input.attr('name');
-					var id = Stencila.uniqueId();
-					var label = $('<label class="decor">'+name+'</label>');
-					input.before(label);
-				});
 				// Make the value attribute of input elements get updated when user makes a change
 				// so that the DOM value is in the HTML that is saved and rendered (without having
 				// to have a POST)
@@ -100,27 +92,10 @@ var Stencila = (function(Stencila){
 				};
 				inputs.on('input',update);
 				inputs.on('change',update);
-				// Add a button if any inputs
-				if(inputs.length>0){
-					if(self.content.find('button').length===0){
-						inputs.last().after('<button class="decor refresh">Refresh</button>');
-					}
-				}
-				// Click on a refresh button sends inputs to stencil
-				self.content.find('button.refresh').click(function(event){
-					event.preventDefault();
-					var values = {};
-					inputs.each(function(){
-						var input = $(this);
-						values[input.attr('name')] = input.attr('value');
-					});
-					self.stencil.inputs(values);
-				});
 			} else {
 				inputs.each(function(elem){
 					$(elem).attr('readonly');
 				});
-				self.content.find('button').remove();
 			}
 		});
 	};

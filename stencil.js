@@ -163,6 +163,20 @@ var Stencila = (function(Stencila){
 				self.view.updating('finish');
 			});
 		}
+
+		/*
+		Temorary holding place for this code for sending inputs to server. To be used for
+		certain permissions levels when refreshing a stencil
+
+				var values = {};
+				inputs.each(function(){
+					var input = $(this);
+					values[input.attr('name')] = input.attr('value');
+				});
+				self.call("inputs({string,string}).render().html():string",[values],function(html){
+					self.update('html',html);
+				});
+		*/
 	};
 
 	Stencil.prototype.refresh = function(){
@@ -178,13 +192,6 @@ var Stencila = (function(Stencila){
 		self.call("restart().html():string",[],function(html){
 			self.update('html',html);
 			self.view.updating('finish');
-		});
-	};
-
-	Stencil.prototype.inputs = function(values){
-		var self = this;
-		self.call("inputs({string,string}).render().html():string",[values],function(html){
-			self.update('html',html);
 		});
 	};
 
