@@ -143,8 +143,8 @@ sub {
  * Will be rendered by MathJax but provide a style here so that
  * math is visible prior to rendering or if rendering fails.
  */
-#content script[type="math/tex"],
-#content script[type="math/asciimath"] {
+#content script[type^="math/tex"],
+#content script[type^="math/asciimath"] {
     display: inline;
     font-style: italic;
     color: gray;

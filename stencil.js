@@ -21,6 +21,9 @@ var Stencila = (function(Stencila){
 		var self = this;
 		Stencila.Components.Component.call(self);
 
+		// Get the initial Stencil HTML content from the page
+		self.html = $('main#content').html();
+
 		// Start with NormalView.
 		self.view = new Stencils.NormalView(self);
 		self.view.refresh();

@@ -66,12 +66,16 @@ var Stencila = (function(Stencila){
 			});
 			// Do MathJax rendering of math using 'Rerender' instead of 'Typeset'
 			// because math is already in <script type="math/..."> elements
-			MathJax.Hub.Queue(["Rerender",MathJax.Hub,"content"]);
-			// Hide math script elements which should now be getting rendered into 
-			// separate display elements by MathJax
-			self.content.find('script[type^="math/tex"],script[type^="math/asciimath"]').each(function(){
-				$(this).css('display','none');
-			});
+			MathJax.Hub.Queue(
+				["Rerender",MathJax.Hub,"content"],
+				// Hide math script elements which should now have been rendered into 
+				// separate display elements by MathJax
+				function(){
+					self.content.find('script[type^="math/tex"],script[type^="math/asciimath"]').each(function(){
+						$(this).css('display','none');
+					});
+				}
+			);
 			// Handle inputs differently based on dynamic or not
 			var inputs = self.content.find('input');
 			if(self.stencil.dynamic()){
