@@ -145,8 +145,19 @@ var Stencila = (function(Stencila){
 		});
 		// Remove all decorator elements that have been added to the content
 		self.content.find('[class*="reveal-"]').remove();
-		// Do NormalView `restore()` for MathJax un-typesetting etc
-		Stencils.NormalView.prototype.restore.call(self);
+		// Get all MathJax "jax" elements (e.g. 
+		//    <script type="math/asciimath" id="MathJax-Element-2">e=m^2</script>
+		// ) and remove the id
+		$.each(['math/tex','math/asciimath'],function(type){
+			$.each(MathJax.Hub.getJaxByInputType(type,'content'),function(){
+				var element = $(this.SourceElement());
+				if(/^MathJax/.exec(element.attr('id'))) element.removeAttr('id');
+			});
+		});
+		// Remove all MathJax elements which have been added
+		self.content.find('.MathJax_Preview, .MathJax').remove();
+		// Now update the stencil's HTML
+		self.stencil.set('html',self.content.html());
 	};
 
 	/**

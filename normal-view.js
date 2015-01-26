@@ -125,22 +125,8 @@ var Stencila = (function(Stencila){
 	 * Restore the stencil from the view
 	 */
 	NormalView.prototype.restore = function(){
-		var self = this;
-		// Get all MathJax "jax" elements (e.g. 
-		//    <script type="math/asciimath" id="MathJax-Element-2">e=m^2</script>
-		// ) and remove the id
-		$.each(['math/tex','math/asciimath'],function(type){
-			$.each(MathJax.Hub.getJaxByInputType(type,'content'),function(){
-				var element = $(this.SourceElement());
-				if(/^MathJax/.exec(element.attr('id'))) element.removeAttr('id');
-			});
-		});
-		// Remove all MathJax elements which have been added
-		self.content.find('.MathJax_Preview, .MathJax').remove();
-		// Remove other temporary decoration elements
-		self.content.find('.decor').remove();
-		// Now update the stencil's HTML
-		self.stencil.set('html',self.content.html());
+		// This is a read only view so don't set the stencil's
+		// content
 	};
 
 	return Stencila;

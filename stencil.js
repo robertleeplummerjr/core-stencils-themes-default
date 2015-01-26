@@ -20,9 +20,6 @@ var Stencila = (function(Stencila){
 	var Stencil  = Stencils.Stencil =  function(){
 		var self = this;
 		Stencila.Components.Component.call(self);
-		
-		// Get the initial Stencil HTML content from the page
-		self.html = $('main#content').html();
 
 		// Start with NormalView.
 		self.view = new Stencils.NormalView(self);
@@ -186,7 +183,7 @@ var Stencila = (function(Stencila){
 		self.call("inputs({string,string}).render().html():string",[values],function(html){
 			self.update('html',html);
 		});
-	}
+	};
 
 	/**
 	 * Prettify stencil HTML
@@ -218,7 +215,7 @@ var Stencila = (function(Stencila){
 				'button', 'input', 'label', 'select', 'textarea',
 				// Must not format programming code that may be in these tags
 				'pre','code','script'
-			] 
+			]
 		});
 	};
 
