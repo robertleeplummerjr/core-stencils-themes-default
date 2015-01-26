@@ -1,6 +1,11 @@
 # Makefile for required Javascript (and potentially other language) libraries
 
-all: MathJax Medium.js
+all: cila-mode MathJax Medium.js
+
+# To add a Cila lanaguage mode to Ace editor it is necessary to symlink our definition into the ace
+# editor directory.
+cila-mode:
+	ln -sf ../../../../stencils/themes/default/cila-mode.js ../../../themes/base/requires/ace/mode-cila.js
 
 ##################################################################################################
 # MathJAX : for displaying math formula
