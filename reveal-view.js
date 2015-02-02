@@ -46,6 +46,7 @@ var Stencila = (function(Stencila){
 				// null = don't remove any
 				attributes: null
 			});
+
 			// Mark any node which gets edited by the user so that it is locked for future renderings
 			// 
 			// The `input` event is fired on the contentediable element, so need
@@ -54,6 +55,7 @@ var Stencila = (function(Stencila){
 			//
 			// This is currently turned off pending further analysis of requirements in this area of user
 			// overriding of directives
+			// 
 			//content.on('input',function(event){
 			//	var element = $(selected.node());
 			//	element.attr('data-lock','true');
@@ -87,84 +89,114 @@ var Stencila = (function(Stencila){
 	 */
 	RevealView.prototype.directives = [{
 			name: 'exec',
+			selector: '[data-exec]',
 			html: '<pre data-exec="r">\n</pre>',
 			icon: 'chevron-circle-left',
 			help: 'Execute code in the stencil\'s context',
 			keys: 'ctrl+shift+e'
 		},{
 			name: 'write',
+			selector: '[data-write]',
 			html: '<span data-write=""></span>',
 			icon: 'chevron-circle-left',
 			help: 'Write a variable to the stencil',
 			keys: 'ctrl+shift+y'
 		},{
+			name: 'with',
+			selector: '[data-with]',
+			html: '<span data-with=""></span>',
+			icon: 'chevron-circle-left',
+			help: '',
+			keys: 'ctrl+shift+u'
+		},{
 			name: 'if',
+			selector: '[data-if]',
 			html: '<div data-if=""></div>',
 			icon: 'chevron-circle-left',
 			help: '',
 			keys: 'ctrl+shift+8'
 		},{
 			name: 'elif',
+			selector: '[data-elif]',
 			html: '<div data-elif=""></div>',
 			icon: 'chevron-circle-left',
 			help: '',
 			keys: 'ctrl+shift+9'
 		},{
 			name: 'else',
+			selector: '[data-else]',
 			html: '<div data-else=""></div>',
 			icon: 'chevron-circle-left',
 			help: '',
 			keys: 'ctrl+shift+0'
 		},{
 			name: 'switch',
+			selector: '[data-switch]',
 			html: '<div data-switch=""></div>',
 			icon: 'chevron-circle-left',
 			help: '',
 			keys: 'ctrl+shift+s'
 		},{
 			name: 'case',
+			selector: '[data-case]',
 			html: '<div data-case=""></div>',
 			icon: 'chevron-circle-left',
 			help: '',
 			keys: 'ctrl+shift+a'
 		},{
 			name: 'default',
+			selector: '[data-default]',
 			html: '<div data-default=""></div>',
 			icon: 'chevron-circle-left',
 			help: '',
 			keys: 'ctrl+shift+d'
 		},{
 			name: 'for',
+			selector: '[data-for]',
 			html: '<div data-for=""><div data-each="">...</div></div>',
 			icon: 'chevron-circle-left',
 			help: '',
 			keys: 'ctrl+shift+f'
 		},{
 			name: 'include',
+			selector: '[data-include]',
 			html: '<div data-include=""></div>',
 			icon: 'chevron-circle-left',
 			help: '',
 			keys: 'ctrl+shift+i'
 		},{
 			name: 'set',
+			selector: '[data-set]',
 			html: '<div data-set=""></div>',
 			icon: 'chevron-circle-left',
 			help: '',
 			keys: 'ctrl+shift+o'
 		},{
 			name: 'macro',
+			selector: '[data-macro]',
 			html: '<div data-macro=""></div>',
 			icon: 'chevron-circle-left',
 			help: '',
 			keys: 'ctrl+shift+m'
 		},{
 			name: 'par',
+			selector: '[data-par]',
 			html: '<div data-par=""></div>',
 			icon: 'chevron-circle-left',
 			help: '',
 			keys: 'ctrl+shift+p'
 		}
 	];
+
+	/**
+	 * A selector expression to capture all directives
+	 */
+	RevealView.prototype.directivesSelector = null;
+	var selectors = [];
+	for(var i=0;i<RevealView.prototype.directives.length;i++){
+		selectors.push(RevealView.prototype.directives[i].selector);
+	}
+	RevealView.prototype.directivesSelector = selectors.join();
 
 	/**
 	 * Content editing related functions
@@ -183,7 +215,7 @@ var Stencila = (function(Stencila){
 				if(selection.rangeCount>0) return selection.getRangeAt(0).startContainer.parentNode;
 			}
 		}
-	}
+	};
 
 	/**
 	 * Close the view
@@ -210,6 +242,8 @@ var Stencila = (function(Stencila){
 		var self = this;
 		// Do NormalView `refresh()` for MathJax typesetting etc
 		Stencils.NormalView.prototype.refresh.call(self);
+		// Add contenteditable="false" to directives within which there should be no editing
+		self.content.find('[data-write],[data-exec]').attr('contenteditable','false');
 		// Refresh code directives
 		self.renderExec();
 		// Refresh console
