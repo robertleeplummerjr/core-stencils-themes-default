@@ -32,6 +32,7 @@ var Stencila = (function(Stencila){
 			// Apply Medium.js for WYSIWYG editing
 			self.wysiwyg = new Medium({
 				element: content.get(0),
+				placeholder: 'In the beginning...',
 				// Define the allowed tags. 
 				// This overrides defaults with null = everything allowed.
 				// Should probably be refined in the future
