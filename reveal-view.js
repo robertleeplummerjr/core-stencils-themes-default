@@ -46,15 +46,18 @@ var Stencila = (function(Stencila){
 				// null = don't remove any
 				attributes: null
 			});
-			// Mark any node which gets edited by the user so that it is locked for furture renderings
+			// Mark any node which gets edited by the user so that it is locked for future renderings
 			// 
 			// The `input` event is fired on the contentediable element, so need
 			// to use `selected.node` to get the actual element (binding `input` to a child event of `#content`
 			// will not work)
-			content.on('input',function(event){
-				var element = $(selected.node());
-				element.attr('data-lock','true');
-			});
+			//
+			// This is currently turned off pending further analysis of requirements in this area of user
+			// overriding of directives
+			//content.on('input',function(event){
+			//	var element = $(selected.node());
+			//	element.attr('data-lock','true');
+			//});
 		}
 
 		// Setup tools
