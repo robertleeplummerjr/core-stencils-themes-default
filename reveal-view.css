@@ -5,6 +5,11 @@
  * is in `normal-view.css`
  */
 
+/******** Placeholder **********/
+
+.Medium-placeholder {
+    color: lightgray;
+}
 
 /******** Content **********/
 
