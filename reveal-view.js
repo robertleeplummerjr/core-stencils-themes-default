@@ -242,12 +242,21 @@ var Stencila = (function(Stencila){
 		var self = this;
 		// Do NormalView `refresh()` for MathJax typesetting etc
 		Stencils.NormalView.prototype.refresh.call(self);
-		// Add contenteditable="false" to directives within which there should be no editing
-		self.content.find('[data-write],[data-exec]').attr('contenteditable','false');
 		// Refresh code directives
 		self.renderExec();
 		// Refresh console
 		self.renderConsole();
+		// Add contenteditable="false" to elements which should not be edited directly
+		self.content.find(
+			// Write directives should be edited through tool
+			'[data-write],'+
+			// Math elements and their MathJax renderings should be edited using tool
+			'script[type^="math"], .MathJax,'+
+			// Exec directives should be edited using Ace editor
+			// If the .ace_editor is not locked then strange things can happen to that
+			// editor element when pressing delete in front of it
+			'[data-exec], .ace_editor'
+		).attr('contenteditable','false');
 	};
 
 	/**
@@ -261,9 +270,9 @@ var Stencila = (function(Stencila){
 		// by Javascript (e.g. by element.show()). But not for
 		// `img [data-output]` directives which need style to define their size
 		self.content.find('[style]').each(function(){
-			var elem = $(this);
-			if(!(elem.prop("tagName").toLowerCase()=="img" & elem.attr("data-output")=="true")){
-				elem.removeAttr('style');
+			var element = $(this);
+			if(!(element.prop("tagName").toLowerCase()=="img" & element.attr("data-output")=="true")){
+				element.removeAttr('style');
 			}
 		});
 		// Remove all `reveal-show` classes and ensure that
@@ -272,6 +281,10 @@ var Stencila = (function(Stencila){
 			var element = $(this);
 			element.removeClass('reveal-show');
 			if(element.attr('class')==='') element.removeAttr('class');
+		});
+		// Remove all `contenteditable` atrtributes
+		self.content.find('[contenteditable]').each(function(){
+			$(this).removeAttr('contenteditable');
 		});
 		// Remove all decorator elements that have been added to the content
 		self.content.find('[class*="reveal-"]').remove();
