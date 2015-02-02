@@ -290,12 +290,10 @@ var Stencila = (function(Stencila){
 		self.content.find('[class*="reveal-"]').remove();
 		// Get all MathJax "jax" elements (e.g. 
 		//    <script type="math/asciimath" id="MathJax-Element-2">e=m^2</script>
-		// ) and remove the id
-		$.each(['math/tex','math/asciimath'],function(type){
-			$.each(MathJax.Hub.getJaxByInputType(type,'content'),function(){
-				var element = $(this.SourceElement());
-				if(/^MathJax/.exec(element.attr('id'))) element.removeAttr('id');
-			});
+		// ) and remove the id if it starts with MathJax
+		self.content.find('script[type^="math/asciimath"],script[type^="math/tex"]').each(function(){
+			var element = $(this);
+			if(/^MathJax/.exec(element.attr('id'))) element.removeAttr('id');
 		});
 		// Remove all MathJax elements which have been added
 		self.content.find('.MathJax_Preview, .MathJax').remove();
