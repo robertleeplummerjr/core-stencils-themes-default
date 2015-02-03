@@ -260,6 +260,12 @@
     font-family: monospace;
 }
 
+/******** Tool actions **********/
+
+.reveal-tool-action {
+    margin: 0 0.3em 0 0.3em;
+}
+
 /******** Tool for `exec` **********/
 
 .reveal-exec-editor {

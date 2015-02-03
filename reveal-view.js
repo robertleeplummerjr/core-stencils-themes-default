@@ -485,9 +485,27 @@ var Stencila = (function(Stencila){
 				tool.append(
 					'write <span class="reveal-tool-arg reveal-tool-arg-expr write_" contenteditable="true">' + element.attr('data-write') + '</span>'
 				);
+				tool.append(
+					'<a class="reveal-tool-action reveal-crush" title="Remove the write directive from this element"><i class="fa fa-eraser"></i></a>'+
+					'<a class="reveal-tool-action reveal-delete" title="Delete this element"><i class="fa fa-trash"></i></a>'
+				);
+				tool.find('.reveal-crush').click(function(event){
+					event.preventDefault();
+					// Remove attributes from element
+					element.removeAttr('data-write');
+					element.removeAttr('contenteditable');
+					// Remove write_ class as an indicator that when this tool closes
+					// a `data-write` attribute should not be added
+					tool.find('.write_').removeClass('write_');
+				});
+				tool.find('.reveal-delete').click(function(event){
+					event.preventDefault();
+					element.remove();
+				});
 			},
 			close : function(tool,element){
-				element.attr('data-write',tool.find('.write_').text());
+				var write = tool.find('.write_');
+				if(write.length) element.attr('data-write',tool.find('.write_').text());
 			}
 		},
 		'.MathJax' : {
