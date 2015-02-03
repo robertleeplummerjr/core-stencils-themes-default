@@ -304,7 +304,9 @@ var Stencila = (function(Stencila){
 			// Exec directives should be edited using Ace editor
 			// If the .ace_editor is not locked then strange things can happen to that
 			// editor element when pressing delete in front of it
-			'[data-exec], .ace_editor'
+			'[data-exec], .ace_editor'+
+			// Elements generated or filled in entriely by rendering
+			'#outline, [data-label]'
 		).attr('contenteditable','false');
 	};
 
