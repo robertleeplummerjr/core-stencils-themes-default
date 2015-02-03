@@ -65,6 +65,54 @@ var Stencila = (function(Stencila){
 
 		// Setup tools
 		self._setupTools();
+
+		// Create an invoke tool
+		var tool = $(
+			'<div class="reveal-invoke-container">' +
+				'<div class="reveal-invoke">' +
+					'<ul></ul>' +
+				'</div>' +
+			'</div>'
+		);
+		var ul = tool.find("ul");
+		// Add each directive to tool and setup key bindings		
+		$.each([{
+				name:'strong',
+				icon:'bold',
+				help:'Bold the selection'
+			},{
+				name:'em',
+				icon:'italic',
+				help:'Italicize the selection'
+			},{
+				name:'u',
+				icon:'underline',
+				help:'Underline the selection'
+			},{
+				name:'strike',
+				icon:'strikethrough',
+				help:'Strike the selection'
+			},{
+				name:'code',
+				icon:'code',
+				help:'Format the selection as code'
+			}
+		],function(index,element){
+			var invoke = function(event){
+				event.preventDefault();
+				self.wysiwyg.focus();
+				self.wysiwyg.invokeElement(element.name);
+			};
+			$(
+				'<li>' +
+					'<a href="" title="' + element.help + '">'+
+						'<i class="fa fa-' + element.icon + '"></i>' +
+					'</a>' +
+				'</li>'
+			).appendTo(ul).find('a').click(invoke);
+		});
+		tool.appendTo(document.body);
+
 		// Setup insertion commands
 		self._setupInserts();
 		// Show it (because some other views hide it)
@@ -317,8 +365,6 @@ var Stencila = (function(Stencila){
 				'</div>' +
 			'</div>'
 		);
-		tool.css("position","absolute");
-		tool.css("z-index","100");
 		var ul = tool.find(".reveal-insert ul");
 		// Add each directive to tool and setup key bindings		
 		$.each(self.directives,function(index,directive){
