@@ -139,14 +139,14 @@ var Stencila = (function(Stencila){
 	RevealView.prototype.directives = [{
 			name: 'exec',
 			selector: '[data-exec]',
-			html: '<pre data-exec="r">\n</pre>',
+			html: '<pre data-exec="r"  contenteditable="false">\n</pre>',
 			icon: 'chevron-circle-left',
 			help: 'Execute code in the stencil\'s context',
 			keys: 'ctrl+shift+e'
 		},{
 			name: 'write',
 			selector: '[data-write]',
-			html: '<span data-write=""></span>',
+			html: '<span data-write="" contenteditable="false"></span>',
 			icon: 'chevron-circle-left',
 			help: 'Write a variable to the stencil',
 			keys: 'ctrl+shift+y'
@@ -417,7 +417,7 @@ var Stencila = (function(Stencila){
 			var text = element.text();
 			// Create an editor <pre> and insert it
 			var editorId = Stencila.uniqueId();
-			var tool = $('<pre class="reveal-exec-editor" id="' + editorId + '"></pre>').insertAfter(element);
+			var tool = $('<pre class="reveal-exec-editor" contenteditable="false" id="' + editorId + '"></pre>').insertAfter(element);
 			if(format) tool.addClass('reveal-exec-editor-out');
 			var editor = editorCreate(editorId,language,self.stencil.writeable());
 			editor.setValue(text);
