@@ -21,6 +21,7 @@ var Stencila = (function(Stencila){
 		// Indentation characters are important:
 		//editor.setShowInvisibles(true);
 		editor.getSession().setUseSoftTabs(false);
+		//editor.getSession().setUseWrapMode(true);
 		// Set the maximum number of lines for the code. When the number
 		// of lines exceeds this number a vertical scroll bar appears on the right
 		editor.setOption("maxLines",1000);
