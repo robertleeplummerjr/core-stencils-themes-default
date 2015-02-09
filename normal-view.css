@@ -251,16 +251,8 @@ sub {
     margin-top: 1em;
 }
 
-#content table caption [data-label] .number,
-#content figure figcaption [data-label] .number,
-#content figure caption  [data-label] .number {
-    margin-left: 0.2em;
-}
-
-#content table caption [data-label] .separator,
-#content figure figcaption [data-label] .separator,
-#content figure caption  [data-label] .separator {
-    margin-right: 0.2em;
+#content [data-label] {
+    display: inline-block;
 }
 
 /************************************************
