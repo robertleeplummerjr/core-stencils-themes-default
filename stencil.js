@@ -30,16 +30,15 @@ var Stencila = (function(Stencila){
 		
 		// Add menu;
 		self.menu = new Stencila.Components.Menu(self);
-		//	... views
+		
+		//	Views section
 		self.menu.section();
-
 		self.menu.item('Normal',function(){
 			self.viewChange(Stencils.NormalView);
 		},{
 			icon: 'file-text-o',
 			keys: 'F6'
 		});
-
 		self.menu.item('Reveal',function(){
 			self.viewChange(Stencils.RevealView);
 		},{
@@ -47,33 +46,24 @@ var Stencila = (function(Stencila){
 			keys:'F7'
 		});
 
-		self.menu.item('Print',function(){
-			window.print();
-		},{
-			icon:'print'
-		});
-
 		if(self.dynamic()){
-
 			self.menu.item('Cila',function(){
 				self.viewChange(Stencils.CilaView);
 			},{
 				icon:'circle-thin',
 				keys:'F8'
 			});
-
 			self.menu.item('HTML',function(){
 				self.viewChange(Stencils.HtmlView);
 			},{
 				icon:'code',
 				keys:'F9'
 			});
+		}
 
-			//'f10': Stencila.Components.BrowseView,
-			//'f11': Stencila.Components.RepoView,
-			//	... actions
+		// Actions section
+		if(self.dynamic()){
 			self.menu.section();
-
 			self.menu.item('Save',function(){
 				self.view.restore();
 				self.save(self.view.format);
@@ -81,21 +71,18 @@ var Stencila = (function(Stencila){
 				icon:'upload',
 				keys:'Ctrl+S'
 			});
-
 			self.menu.item('Refresh',function(){
 				self.refresh();
 			},{
 				icon:'flash',
 				keys:'Ctrl+R'
 			});
-
 			self.menu.item('Restart',function(){
 				self.restart();
 			},{
 				icon:'refresh',
 				keys:'Ctrl+Shift+R'
 			});
-
 			self.menu.item('Console',function(){
 				self.viewChange(Stencils.RevealView);
 				self.view.ensureConsole();
@@ -103,6 +90,14 @@ var Stencila = (function(Stencila){
 				icon:'terminal'
 			});
 		}
+
+		// Export section
+		self.menu.section();
+		self.menu.item('Print',function(){
+			window.print();
+		},{
+			icon:'print'
+		});
 	};
 
 	// Deferred inheritance
