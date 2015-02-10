@@ -69,11 +69,13 @@ Sans serif font stack
 	margin-top: 1em;
 }
 
-/* Emphasis */
-#content em {
+/* Emphasis etc */
+#content em,
+#content i {
     font-style: italic;
 }
-#content strong {
+#content strong,
+#content b {
     font-weight: bold;
 }
 
