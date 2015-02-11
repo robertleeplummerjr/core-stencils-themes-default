@@ -5,6 +5,17 @@
  * is in `normal-view.css`
  */
 
+/******** Placeholder **********/
+
+.Medium-placeholder {
+    color: lightgray;
+    position: absolute;
+    left: 50%;
+}
+.Medium-placeholder > div {
+    position: relative;
+    margin-left: -50%;
+}
 
 /******** Content **********/
 
